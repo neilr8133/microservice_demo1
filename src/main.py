@@ -13,11 +13,11 @@ import simple_engine
 
 
 def main():
-	httpd_obj = simple_engine.createHttpServer()
+	httpd_obj = simple_engine.simpleHttpServer()
 	print "Starting single-threaded server..."
-	for i in range(2):
-		httpd_obj.handle_request()
-	print "Reached max number of queries, halting."
+	while httpd_obj.get_keep_running():
+		httpd_obj.handle_one_request()
+	print "Received request for shutdown; halting."
 
 
 if "__main__" == __name__:

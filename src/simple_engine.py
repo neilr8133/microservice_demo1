@@ -16,7 +16,6 @@ class customRequestHandler(BaseHTTPServer.BaseHTTPRequestHandler):
 	
 	# Declare some class-level variables
 	_num_queries_received = 0
-	_keep_serving_queries = True
 	
 	# Do not override or extend the __init__() method.
 	
@@ -35,36 +34,51 @@ class customRequestHandler(BaseHTTPServer.BaseHTTPRequestHandler):
 	
 	
 	def do_GET(self):
-		print "GET request received:"
-		print "\tRequest path: {0}".format(self.path)
-		print "Sending headers..."
 		customRequestHandler._num_queries_received += 1
 		self.send_response(200)
 		self.send_header('queries_received', customRequestHandler._num_queries_received)
 		self.end_headers()
 		self.wfile.write(self.emit_html_header())
-		self.wfile.write("<P>Success!</p>")
-		self.wfile.write("<P>Queries received: {0}</p>".format(
+		self.wfile.write("<P>Success!</p>\n")
+		self.wfile.write("<P>Queries received: {0}</p>\n".format(
 				customRequestHandler._num_queries_received))
+		response = '(None)'
+		if self.path.endswith('/yes'):
+			response = 'Yes'
+		if self.path.endswith('/no'):
+			response = 'No'
+		if self.path.endswith('/die'):
+			response = '(Server shutdown)'
+			simpleHttpServer.set_keep_running(False)
+		self.wfile.write("<P>API response: {0}".format(response))
 		self.wfile.write(self.emit_html_footer())
 # End of class customRequestHandler ==========================================
 
 
 
-def createHttpServer(server_class=BaseHTTPServer.HTTPServer,
-                     handler_class=customRequestHandler):
-	"""Creates a simple HTTP server that responds to custom API endpoints.
+class simpleHttpServer(object):
 	
-	Based on the documentation sample at
-	https://docs.python.org/2.7/library/basehttpserver.html
+	# Declare some class-level variables
+	_keep_running = True
 	
-	@return An HTTPD server object (not yet running)
-	"""
-	server_listen_address = ('127.0.0.1', 8000)  # Only listen to localhost.
-	httpd = server_class(server_listen_address, handler_class)
-	return httpd
-# End of createHttpServer() --------------------------------------------------
+	def __init__(self,
+	             listen_ip='127.0.0.1',
+	             listen_port=8000,
+	             server_class=BaseHTTPServer.HTTPServer,
+	             handler_class=customRequestHandler):
+		self._httpd = server_class((listen_ip, listen_port), handler_class)
+	
+	def handle_one_request(self):
+		self._httpd.handle_request()
+	
+	@staticmethod
+	def set_keep_running(new_status=True):
+		simpleHttpServer._keep_running = new_status
+	
+	@staticmethod
+	def get_keep_running():
+		return simpleHttpServer._keep_running
 
-
+# End of class simpleHttp ====================================================
 
 # EOF
