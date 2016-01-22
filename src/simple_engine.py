@@ -13,15 +13,40 @@ import BaseHTTPServer
 
 
 class customRequestHandler(BaseHTTPServer.BaseHTTPRequestHandler):
+	
+	# Declare some class-level variables
+	_num_queries_received = 0
+	_keep_serving_queries = True
+	
 	# Do not override or extend the __init__() method.
+	
+	def emit_html_header(self):
+		return """
+<HTML>
+	<HEAD>
+		<TITLE>Page demo from builtin engine</TITLE>
+	</HEAD>
+	<BODY>"""
+	
+	def emit_html_footer(self):
+		return """
+	</BODY>
+</HTML>"""
+	
+	
 	def do_GET(self):
 		print "GET request received:"
 		print "\tRequest path: {0}".format(self.path)
 		print "Sending headers..."
+		customRequestHandler._num_queries_received += 1
 		self.send_response(200)
-		self.send_header('queries_answered', 'infinite')
+		self.send_header('queries_received', customRequestHandler._num_queries_received)
 		self.end_headers()
-		self.wfile.write("""<HTML><BODY><P>Success!</p></body></html>""")
+		self.wfile.write(self.emit_html_header())
+		self.wfile.write("<P>Success!</p>")
+		self.wfile.write("<P>Queries received: {0}</p>".format(
+				customRequestHandler._num_queries_received))
+		self.wfile.write(self.emit_html_footer())
 # End of class customRequestHandler ==========================================
 
 
