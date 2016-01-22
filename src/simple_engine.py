@@ -53,7 +53,7 @@ class customRequestHandler(BaseHTTPServer.BaseHTTPRequestHandler):
 		if self.path.endswith('/die'):
 			response = '(Server shutdown)'
 			simpleHttpServer.set_keep_running(False)
-		self.wfile.write("<P>API response: {0}".format(response))
+		self.wfile.write("<P>API response: {0}</P>".format(response))
 		self.wfile.write(self.emit_html_footer())
 	# End of do_GET() --------------------------------------------------------
 # End of class customRequestHandler ==========================================
