@@ -3,13 +3,13 @@
 # Create a simple REST API and attempt to show what you consider ``best practices''.
 
 # Import standard libraries
-import BaseHTTPServer
+# (None)
 
 # Import third-party libraries
 # (None)
 
 # Import custom libraries
-import simple_engine
+import frameworks.simple_engine as simple_engine
 
 
 def yes():
