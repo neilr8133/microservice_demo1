@@ -13,8 +13,11 @@ setup(
 	version = "0.0.1",
 	
 	install_requires = [
+		'flask',
 		'httpie',
 		'nose',
+		'pylint',
+		'requests',
 	],
 	packages = find_packages(),
 	# scripts = [
