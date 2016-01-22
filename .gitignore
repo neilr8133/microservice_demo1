@@ -1,0 +1,5 @@
+# Ignore the virtualenv
+venv/
+
+# Ignore generated files
+*.pyc
