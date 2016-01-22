@@ -1,9 +1,15 @@
 #!/bin/env python
 #
-# Create a simple REST API and attempt to show what you consider ``best practices''.
+# Abstract the engine so it can be replaced with a more robust framework
 
 # Import standard libraries
 import BaseHTTPServer
+
+# Import third-party libraries
+# (None)
+
+# Import custom libraries
+# (None)
 
 
 class customRequestHandler(BaseHTTPServer.BaseHTTPRequestHandler):
@@ -35,14 +41,5 @@ def createHttpServer(server_class=BaseHTTPServer.HTTPServer,
 # End of createHttpServer() --------------------------------------------------
 
 
-def main():
-	httpd_obj = createHttpServer()
-	print "Starting single-threaded server..."
-	for i in range(2):
-		httpd_obj.handle_request()
-
-
-if "__main__" == __name__:
-	main()
 
 # EOF
