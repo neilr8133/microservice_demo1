@@ -16,7 +16,7 @@ def main():
 	httpd_obj = simple_engine.simpleHttpServer()
 	print "Starting single-threaded server..."
 	while httpd_obj.get_keep_running():
-		httpd_obj.handle_one_request()
+		httpd_obj.handle_request()
 	print "Received request for shutdown; halting."
 
 
