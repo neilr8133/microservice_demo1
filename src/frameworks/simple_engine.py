@@ -57,8 +57,7 @@ class customRequestHandler(BaseHTTPServer.BaseHTTPRequestHandler):
 		self.send_header('queries_received', customRequestHandler._num_queries_received)
 		self.end_headers()
 		self.wfile.write(self.emit_html_header())
-		self.wfile.write("<P>Success!</p>\n")
-		self.wfile.write("<P>Queries received: {0}</p>\n".format(
+		self.wfile.write("<P>Number of queries received: {0}</p>\n".format(
 				customRequestHandler._num_queries_received))
 		response = None
 		if self.path in self._registered_endpoints:
