@@ -10,13 +10,19 @@ setup(
 	author_email = "neilr@ieee.org",
 	description = "Dummy project demonstrating Python use and API construction",
 	name = "API_demo",
-	version = "0.0.1",
+	version = "0.1.1",
 	
 	install_requires = [
-		'flask',
+		# Only used for development or demo--not required for 'production'
+		# (and would probably be removed from a release candidate, although
+		# their presence should cause no harm).
+		'bumpversion',
 		'httpie',
 		'nose',
 		'pylint',
+		
+		# Used for 'production'
+		'flask',
 		'requests',
 	],
 	packages = find_packages(),
