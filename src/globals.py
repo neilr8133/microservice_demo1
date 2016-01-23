@@ -15,5 +15,7 @@ from __future__ import absolute_import
 
 
 app = None
+bind_address = None
+listen_port = None
 
 # EOF
