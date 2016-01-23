@@ -27,6 +27,8 @@ def parse_options():
 	config['bind_address'] = parser.get('master', 'bind_address')
 	config['listen_port'] = parser.getint('master', 'listen_port')
 	return config
+# End of parse_options() -----------------------------------------------------
+
 
 def main():
 	config = parse_options()
@@ -43,6 +45,7 @@ def main():
 	while httpd_obj.get_keep_running():
 		httpd_obj.handle_request()
 	print "Received request for shutdown; halting."
+# End of main() --------------------------------------------------------------
 
 
 if "__main__" == __name__:
