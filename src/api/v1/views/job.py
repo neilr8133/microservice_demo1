@@ -14,9 +14,9 @@ from api.v1.models import job
 import globals
 
 
-globals.app = flask.Flask('demo')
+globals.app_handle = flask.Flask('demo')
 
-@globals.app.route('/')
+@globals.app_handle.route('/')
 def hello():
 	return 'Hello, world!'
 

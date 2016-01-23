@@ -21,7 +21,7 @@ import globals
 
 def main():
 	config.parse_options()
-	globals.app.run(
+	globals.app_handle.run(
 		host=globals.bind_address,
 		port=globals.listen_port
 	)

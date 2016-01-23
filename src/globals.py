@@ -14,7 +14,8 @@ from __future__ import absolute_import
 # (None)
 
 
-app = None
+app_handle = None
+app_name = None
 bind_address = None
 listen_port = None
 

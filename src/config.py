@@ -19,6 +19,7 @@ def parse_options():
 	config = {}
 	parser = ConfigParser.SafeConfigParser()
 	parser.read(master_config_filename)
+	globals.app_name = parser.get('master', 'app_name')
 	globals.bind_address = parser.get('master', 'bind_address')
 	globals.listen_port = parser.getint('master', 'listen_port')
 # End of parse_options() -----------------------------------------------------
