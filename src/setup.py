@@ -4,6 +4,7 @@
 # Setup and configuration required to run the program.
 
 from setuptools import setup, find_packages
+
 setup(
 	# Metadata
 	author = "Neil Richardson",
