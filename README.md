@@ -40,3 +40,13 @@ Create (and activate) a virtualenv:
 Install program dependencies:
 
 		$ python src/setup.py install
+
+Note that this install not just the runtime requirements, but tools used for
+development and demonstration as well; this is intentional given the nature
+of this project as a "demonstration project".  These groups are called out
+in the `setup.py` file and for a production system the dev/demo group could
+be removed--although there should also be no harm in letting them be deployed.
+
+## Testing
+
+In the top-level folder just run `nosetests`.
