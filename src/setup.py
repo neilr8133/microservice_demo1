@@ -10,7 +10,7 @@ setup(
 	author_email = "neilr@ieee.org",
 	description = "Dummy project demonstrating Python use and API construction",
 	name = "API_demo",
-	version = "0.1.1",
+	version = "0.2.0",
 	
 	install_requires = [
 		# Only used for development or demo--not required for 'production'
