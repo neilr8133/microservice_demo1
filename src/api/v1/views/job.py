@@ -12,6 +12,7 @@ import flask
 # Import custom libraries
 from api.v1.models import job
 import globals
+import http_status_codes
 
 
 globals.app_handle = flask.Flask('demo')
@@ -22,24 +23,12 @@ def debug():
 	return 'Debug info printed to console.'
 
 def generate_route_string(suffix):
-	return '/ask_question/v1{0}'.format(suffix)
-
-@globals.app_handle.route(generate_route_string('/'))
-def hello():
-	return 'Hello, world! "{0}"'.format(__name__)
-
-@globals.app_handle.route(generate_route_string('/yes'))
-def yes():
-	return 'Yes'
-
-@globals.app_handle.route(generate_route_string('/no'))
-def no():
-	return 'No'
+	return '/ask_a_minion/v1{0}'.format(suffix)
 
 @globals.app_handle.route(generate_route_string('/<uuid>'), methods=['GET'])
 def lookup_uuid(uuid=None):
 	if not uuid:
-		return (400, 'Invalid UUID')
+		return (http_status_codes.BAD_REQUEST, 'Invalid UUID')
 	#lookup_job = job.Job()
 	#return 'User requested to lookup Job ID "{0}"'.format(flask.request.)
 
