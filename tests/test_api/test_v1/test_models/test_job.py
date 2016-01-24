@@ -1,4 +1,4 @@
-from __future__ import absolute_import, print_statement
+from __future__ import absolute_import
 #
 # @file test_job.py
 # Unit tests for api.v1.models.job 
@@ -47,7 +47,7 @@ class test_jobstatus_to_str(object):
 	def test_jobstatus_from_str(self):
 		"""Verify that the status strings are what we expect"""
 		def _check_mapping(index, text):
-			assert job.JobStatus.from_str(index) == text
+			assert job.JobStatus.from_str(text) == index
 		# End of helper-function _check_mapping() - - - - - - - - -- - - - - -
 		
 		for (expected_index, expected_status) in zip(
