@@ -25,13 +25,13 @@ class Test_JobResult(object):
 	
 	
 	def test_has_expected_num_of_results(self):
-		"""Verify the number of possible results is what we expect"""
+		"""JobResult: Verify the number of possible results is what we expect"""
 		assert len(job.JobResult._result_names) == len(self.result_list)
 	# End of test_has_expected_num_of_results() ------------------------------
 	
 	
 	def test_jobresult_to_str(self):
-		"""Verify that we recognize the expected job numeric values"""
+		"""JobResult: Verify that we recognize the expected job numeric values"""
 		def _check_mapping(index, text):
 			assert job.JobResult.to_str(index) == text
 		# End of helper-function _check_mapping() - - - - - - - - -- - - - - -
@@ -44,7 +44,7 @@ class Test_JobResult(object):
 	
 	
 	def test_jobresult_from_str(self):
-		"""Verify that the status strings are recognized"""
+		"""JobResult: Verify that the status strings are recognized"""
 		def _check_mapping(index, text):
 			assert job.JobResult.from_str(text) == index
 		# End of helper-function _check_mapping() - - - - - - - - -- - - - - -
@@ -70,13 +70,13 @@ class Test_JobStatus(object):
 	
 	
 	def test_has_expected_num_of_statuses(self):
-		"""Verify the number of possible statuses is what we expect"""
+		"""JobStatus: Verify the number of possible statuses is what we expect"""
 		assert len(job.JobStatus._status_names) == len(self.status_list)
 	# End of test_has_expected_num_of_statuses() -----------------------------
 	
 	
 	def test_jobstatus_to_str(self):
-		"""Verify that we recognize the expected job status numeric codes"""
+		"""JobStatus: Verify that we recognize the expected job status numeric codes"""
 		def _check_mapping(index, text):
 			assert job.JobStatus.to_str(index) == text
 		# End of helper-function _check_mapping() - - - - - - - - -- - - - - -
@@ -89,7 +89,7 @@ class Test_JobStatus(object):
 	
 	
 	def test_jobstatus_from_str(self):
-		"""Verify that the status strings are recognized"""
+		"""JobStatus: Verify that the status strings are recognized"""
 		def _check_mapping(index, text):
 			assert job.JobStatus.from_str(text) == index
 		# End of helper-function _check_mapping() - - - - - - - - -- - - - - -
@@ -105,12 +105,12 @@ class Test_JobStatus(object):
 class Test_Job_Model(object):
 	@nose.tools.raises(TypeError)
 	def test_setstatus_disallows_strings(self):
-		"""Verify that _set_status disallows string values."""
+		"""Job_Model: Verify that _set_status disallows string values."""
 		job.Job()._set_status('a')
 	# End of test_setstatus_disallows_strings() ------------------------------
 	
 	def test_setstatus_accepts_integers(self):
-		"""Verify that _set_status allows (possibly invalid) integer values."""
+		"""Job_Model: Verify that _set_status allows (possibly invalid) integer values."""
 		one_job = job.Job()
 		status_code = 0
 		one_job._set_status(status_code)
