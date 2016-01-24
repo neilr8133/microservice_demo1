@@ -6,4 +6,3 @@ venv/
 dist/
 *.db
 *.pyc
-
