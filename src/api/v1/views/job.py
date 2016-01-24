@@ -15,15 +15,21 @@ import globals
 import http_status_codes
 
 
-globals.app_handle = flask.Flask('demo')
+globals.app_handle = flask.Flask('demo')  # @TODO: This initialization needs to happen elsewhere!
+
 
 @globals.app_handle.route('/debug')
 def debug():
-	print globals.app_handle.url_map
-	return 'Debug info printed to console.'
+	message = str(globals.app_handle.url_map)
+	message += '\n'
+	message += flask.url_for('lookup_uuid', uuid=1234)
+	return message
+
 
 def generate_route_string(suffix):
 	return '/ask_a_minion/v1{0}'.format(suffix)
+
+
 
 @globals.app_handle.route(generate_route_string('/<uuid>'), methods=['GET'])
 def lookup_uuid(uuid=None):
@@ -37,7 +43,10 @@ def lookup_uuid(uuid=None):
 	# new_job = job.Job()
 	# new_job.dispatch()
 	
-# GET  /ask_question/v1/<UUID>
-# POST /ask_question/v1/shake  JSON: delay=TT (seconds)
+# GET  /ask_a_minion/v1/<UUID>
+# POST /ask_a_minion/v1/time   JSON: delay=TT (seconds)                 returns UUID, then current time (after delay expires)
+# POST /ask_a_minion/v1/magic8ball  JSON: delay=TT (seconds) query=??   returns UUID, then Yes/No/Maybe
+# POST /ask_a_minion/v1/
+
 
 # EOF
