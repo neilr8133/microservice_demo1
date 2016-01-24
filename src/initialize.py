@@ -1,9 +1,9 @@
 from __future__ import absolute_import
 #
 # @file initialize.py
-#
-#
 # Destructively [re]initializes the database.
+#
+# This should be run whenever a model is added or modified.
 
 # Import standard libraries
 import ConfigParser
@@ -21,7 +21,7 @@ import storage
 def generate_table_definitions():
 	"""Return a dictionary of tables and definitions we'll be storing.
 	
-	This method should be updated with new models or updates to existing ones.
+	This method should be updated when new models are added.
 	
 	@return Dictionary keyed by table names with value being the table
 	        definitions.
