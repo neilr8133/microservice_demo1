@@ -36,4 +36,19 @@ def yes():
 def no():
 	return 'No'
 
+@globals.app_handle.route(generate_route_string('/<uuid>'), methods=['GET'])
+def lookup_uuid(uuid=None):
+	if not uuid:
+		return (400, 'Invalid UUID')
+	#lookup_job = job.Job()
+	#return 'User requested to lookup Job ID "{0}"'.format(flask.request.)
+
+#@globals.app_handle.route(generate_route_string('/do'), methods=['POST'])
+#def do_something():
+	# new_job = job.Job()
+	# new_job.dispatch()
+	
+# GET  /ask_question/v1/<UUID>
+# POST /ask_question/v1/shake  JSON: delay=TT (seconds)
+
 # EOF

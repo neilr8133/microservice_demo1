@@ -1,3 +1,10 @@
+# Project Objective and Document Layout
+
+This project was produced as a ``coding demo/test'' with instructions that it
+be made publically-available on a repository site.  Below, we first list the
+assignment instructions, and then we follow with the normal project-specific
+stuff that one would expect to find in a README.
+
 # Assignment
 Create a simple REST API and attempt to show what you consider ``best practices''
 
@@ -25,7 +32,11 @@ consideration for the position:
 * Docker deployment (Create a docker container to run the application)
 * Unit Test coverage calculations
 
-# Usage
+# Project Overview
+
+This project as implemented demonstrates a simple ``master/minion'' pair
+which implements a fairly trivial microservice but which demonstrates code
+layout decisions, asynchronous processing, etc.
 
 ## Setup
 Create (and activate) a virtualenv:
@@ -39,7 +50,7 @@ Create (and activate) a virtualenv:
 
 Install program dependencies:
 
-		$ python src/setup.py install
+		(venv) $ python src/setup.py install
 
 Note that this install not just the runtime requirements, but tools used for
 development and demonstration as well; this is intentional given the nature
@@ -47,6 +58,19 @@ of this project as a "demonstration project".  These groups are called out
 in the `setup.py` file and for a production system the dev/demo group could
 be removed--although there should also be no harm in letting them be deployed.
 
+Initialize the database (this command can be re-run later to clear any
+lingering jobs):
+
+		(venv) $ cd src
+		(venv) $ python initialize.py
+
 ## Testing
 
 In the top-level folder just run `nosetests`.
+
+## Notes
+
+We use a simple SQLite database for storage; there is an argument that we
+can/should use an ORM like SQLalchemy, but for the sake of keeping the demo
+`simple' and not cluttering things up with too many third-party libraries, we
+do not do that here.

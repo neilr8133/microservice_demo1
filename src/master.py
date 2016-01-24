@@ -17,14 +17,17 @@ import ConfigParser
 import api
 import config
 import globals
+import storage
 
 
 def main():
 	config.parse_options()
+	storage.initialize()
 	globals.app_handle.run(
 		host=globals.bind_address,
 		port=globals.listen_port
 	)
+	storage.close()
 	print "Received request for shutdown; halting."
 # End of main() --------------------------------------------------------------
 

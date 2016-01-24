@@ -10,7 +10,7 @@ import uuid
 # (None)
 
 # Import custom libraries
-# (None)
+import storage
 
 
 
@@ -42,10 +42,25 @@ class JobStatus(object):
 
 
 class Job(object):
+	
+	# Class-level definitions
+	# For storage purposes, identify the attributes that should persist.
+	_field_definitions = {
+		'status': 'text',
+		'uuid': 'text',
+	}
+	
 	def __init__(self):
 		self._status = JobStatus.from_str('not_started')
 		self._uuid = str(uuid.uuid4())
+		self.destination = None
 	# End of __init__() ------------------------------------------------------
+	
+	
+	@staticmethod
+	def _get_field_definitions():
+		return Job._field_definitions
+	# End of _get_table_representation() -------------------------------------
 	
 	
 	def get_uuid(self):
@@ -56,6 +71,20 @@ class Job(object):
 	def get_status(self):
 		return self._status
 	# End of get_status() ----------------------------------------------------
+	
+	
+	def get_destination(self):
+		return self.destination
+	# End of get_destination() -----------------------------------------------
+	
+	
+	def set_destination(self, target_ip):
+		self.destination = target_ip
+	# End of set_destination() -----------------------------------------------
+	
+	
+	def dispatch(self):
+		print "Would dispatch job '{0}' to minion at '{1}'".format(self.get_uuid(), self.get_destination())
 # End of class Job ===========================================================
 
 # EOF
