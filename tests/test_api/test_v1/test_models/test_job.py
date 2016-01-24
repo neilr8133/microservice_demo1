@@ -13,7 +13,7 @@ import nose
 import src.api.v1.models.job as job
 
 
-class test_jobresult_to_str(object):
+class Test_JobResult(object):
 	def __init__(self):
 		# Define the list of results we expect to find
 		self.result_list = [
@@ -53,11 +53,11 @@ class test_jobresult_to_str(object):
 				range(len(self.result_list)), self.result_list):
 			yield _check_mapping, expected_index, expected_result
 	# End of test_jobresult_from_str() ---------------------------------------
-# End of class test_jobresult_to_str =========================================
+# End of class Test_JobResult ================================================
 
 
 
-class Test_JobStatus_To_Str(object):
+class Test_JobStatus(object):
 	def __init__(self):
 		# Define the list of statuses we expect to find
 		self.status_list = [
@@ -97,5 +97,25 @@ class Test_JobStatus_To_Str(object):
 		for (expected_index, expected_status) in zip(
 				range(len(self.status_list)), self.status_list):
 			yield _check_mapping, expected_index, expected_status
-	# End of Test_JobStatus_To_Str() ---------------------------------------
+	# End of Test_JobStatus_To_Str() -----------------------------------------
+# End of class Test_JobStatus ================================================
+
+
+
+class Test_Job_Model(object):
+	@nose.tools.raises(TypeError)
+	def test_setstatus_disallows_strings(self):
+		"""Verify that _set_status disallows string values."""
+		job.Job()._set_status('a')
+	# End of test_setstatus_disallows_strings() ------------------------------
+	
+	def test_setstatus_accepts_integers(self):
+		"""Verify that _set_status allows (possibly invalid) integer values."""
+		one_job = job.Job()
+		status_code = 0
+		one_job._set_status(status_code)
+		assert one_job.get_status() == job.JobStatus.to_str(status_code)
+	# End of test_setstatus_accepts_integers() -------------------------------
+# End of class Test_Job_Model ================================================
+
 # EOF
