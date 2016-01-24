@@ -14,6 +14,32 @@ import storage
 
 
 
+class JobResult(object):
+	_result_names = [
+		'success',
+		'error',
+		'abort',
+	]
+	
+	
+	@staticmethod
+	def to_str(numeric_value):
+		if numeric_value < 0 or numeric_value >= len(JobResult._result_names):
+			raise ValueError("Numeric code '{0}' not a valid JobResult".format(numeric_value))
+		return JobResult._result_names[numeric_value]
+	# End of to_str() --------------------------------------------------------
+	
+	
+	@staticmethod
+	def from_str(textual_representation):
+		if textual_representation not in JobResult._result_names:
+			raise ValueError("JobResult string '{}' not a valid result".format(textual_representation))
+		return JobResult._result_names.index(textual_representation)
+	# End of from_str() ------------------------------------------------------
+# End of class JobResult =====================================================
+
+
+
 class JobStatus(object):
 	_status_names = [
 		'not_started',
@@ -46,6 +72,7 @@ class Job(object):
 	# Class-level definitions
 	# For storage purposes, identify the attributes that should persist.
 	_field_definitions = {
+		'result': 'text',
 		'status': 'text',
 		'uuid': 'text',
 	}
@@ -53,6 +80,7 @@ class Job(object):
 	def __init__(self):
 		self._status = JobStatus.from_str('not_started')
 		self._uuid = str(uuid.uuid4())
+		self._result = JobResult
 		self.destination = None
 	# End of __init__() ------------------------------------------------------
 	
