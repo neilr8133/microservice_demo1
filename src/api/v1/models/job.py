@@ -4,6 +4,7 @@ from __future__ import absolute_import
 # Define the 'job' model.
 #
 # Import standard libraries
+import json
 import uuid
 
 # Import third-party libraries
@@ -15,10 +16,12 @@ import storage
 
 
 class JobResult(object):
+	# JobResult only refers to jobs that have finished running.
+	
 	_result_names = [
-		'success',
-		'error',
-		'abort',
+		'success', # No error detected
+		'error',   # Some error detected
+		'abort',   # Job was aborted by external signal
 	]
 	
 	
@@ -42,10 +45,10 @@ class JobResult(object):
 
 class JobStatus(object):
 	_status_names = [
-		'not_started',
-		'pending',
-		'running',
-		'finished',
+		'not_started', # Not dispatched.
+		'pending',     # Dispatched, but may still be waiting to run on minion.
+		'running',     # We queried minion status and found the job running.
+		'finished',    # Minion reported execution is done (check JobResult).
 	]
 	
 	
@@ -78,9 +81,10 @@ class Job(object):
 	}
 	
 	def __init__(self):
-		self._status = JobStatus.from_str('not_started')
+		# If more fields are added, remember to update get_json().
+		self._status_code = JobStatus.from_str('not_started')
 		self._uuid = str(uuid.uuid4())
-		self._result = JobResult
+		self._result = None
 		self.destination = None
 	# End of __init__() ------------------------------------------------------
 	
@@ -97,7 +101,19 @@ class Job(object):
 	
 	
 	def get_status(self):
-		return self._status
+		return JobStatus.to_str(self._status_code)
+	# End of get_status() ----------------------------------------------------
+	
+	
+	def _set_status(self, numeric_code):
+		if not isinstance(numeric_code, int):
+			raise TypeError("Invoked _set_status with type '{0}', expected int".format(type(numeric_code)))
+		self._status_code = numeric_code
+	# End of get_status() ----------------------------------------------------
+	
+	
+	def get_result(self):
+		return self._result
 	# End of get_status() ----------------------------------------------------
 	
 	
@@ -111,7 +127,25 @@ class Job(object):
 	# End of set_destination() -----------------------------------------------
 	
 	
+	def get_json(self):
+		this_obj = {
+				'status': self.get_status(),
+				'uuid': self.get_uuid(),
+		}
+		if self.get_result():
+			this_obj['result'] = self.get_result()
+		json_obj = json.dumps(
+			this_obj,
+			sort_keys=True,
+			indent=4,
+			separators=(',', ': '),
+		)
+		return json_obj
+	# End of get_json() ------------------------------------------------------
+	
+	
 	def dispatch(self):
+		self._set_status(JobStatus.from_str('pending'))
 		print "Would dispatch job '{0}' to minion at '{1}'".format(self.get_uuid(), self.get_destination())
 # End of class Job ===========================================================
 

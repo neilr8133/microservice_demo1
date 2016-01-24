@@ -4,7 +4,7 @@ from __future__ import absolute_import
 # Unit tests for api.v1.models.job 
 
 # Import standard libraries
-# (None)
+import json
 
 # Import third-party libraries
 import nose
@@ -105,17 +105,26 @@ class Test_JobStatus(object):
 class Test_Job_Model(object):
 	@nose.tools.raises(TypeError)
 	def test_setstatus_disallows_strings(self):
-		"""Job_Model: Verify that _set_status disallows string values."""
+		"""Job_Model: Verify that _set_status disallows string values"""
 		job.Job()._set_status('a')
 	# End of test_setstatus_disallows_strings() ------------------------------
 	
+	
 	def test_setstatus_accepts_integers(self):
-		"""Job_Model: Verify that _set_status allows (possibly invalid) integer values."""
+		"""Job_Model: Verify that _set_status allows (possibly invalid) integer values"""
 		one_job = job.Job()
 		status_code = 0
 		one_job._set_status(status_code)
 		assert one_job.get_status() == job.JobStatus.to_str(status_code)
 	# End of test_setstatus_accepts_integers() -------------------------------
+	
+	
+	def test_dump_json_of_new_object(self):
+		"""Job_Model: Dumping JSON of a newly-created object produces expected format"""
+		one_job = job.Job()
+		dumped_obj = json.loads(one_job.get_json())
+		assert dumped_obj['status'] == 'not_started'
+	# End of test_dump_json_of_new_object() ----------------------------------
 # End of class Test_Job_Model ================================================
 
 # EOF
