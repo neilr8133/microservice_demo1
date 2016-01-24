@@ -1,4 +1,4 @@
-# Project Objective and Document Layout
+# Top-Level Project Objective and Document Layout
 
 This project was produced as a ``coding demo/test'' with instructions that it
 be made publically-available on a repository site.  Below, we first list the
