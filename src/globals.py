@@ -2,7 +2,10 @@ from __future__ import absolute_import
 #
 # @file globals.py
 # Used to manage our global variables (ick, ick, ick!).
-# There's undoubtedly a better way to do this, but for quick-and-dirty it works.
+#
+# It would be entirely possible to add these values to the Flask.config object,
+# however although that would make the code cleaner it would also bind us more
+# tightly to the Flask framework.
 
 # Import standard libraries
 # (None)
