@@ -10,7 +10,7 @@ import json
 import nose
 
 # Import custom modules
-import globals
+import global_vars
 import initialize
 import src.api.v1.models.job as job
 import storage
@@ -112,7 +112,7 @@ class Test_Job_Model(object):
 		# Because storage has to open/close connection with every access (UGH),
 		# we can't use ':memory:' or else we lose the DB after every command..
 		# UGH!
-		globals.db_filename = 'DELETE_ME__unittest.db'
+		global_vars.db_filename = 'DELETE_ME__unittest.db'
 		model_list = initialize.generate_model_list()
 		initialize.clear_tables(model_list)
 		initialize.create_new_tables(model_list)
@@ -120,7 +120,7 @@ class Test_Job_Model(object):
 	
 	
 	def tearDown(self):
-		storage.close(globals.storage_handle)
+		storage.close(global_vars.storage_handle)
 	# End of tearDown() ------------------------------------------------------
 	
 	

@@ -24,7 +24,7 @@ import sqlite3
 # (None)
 
 # Import custom libraries
-import globals
+import global_vars
 
 
 def connect(db_filename):
@@ -45,10 +45,10 @@ def connect_then_disconnect(func):
 	# accept a filename...that's because it is.
 	# @TODO: Fixme so that we don't have to connect/disconnect with every DB operation!
 	def wrapper(*args, **kwargs):
-		globals.storage_handle = connect(globals.db_filename)
+		global_vars.storage_handle = connect(global_vars.db_filename)
 		# print "Calling {} with args {}".format(func, args, kwargs)
 		result = func(*args, **kwargs)
-		close(globals.storage_handle)
+		close(global_vars.storage_handle)
 		return result
 	return wrapper
 
@@ -60,7 +60,7 @@ def delete_table(table_name):
 	# <http://stackoverflow.com/a/9252507> and others).  So, acknowledging
 	# that we would want something better for Production (an ORM?), we'll
 	# be a little insecure here.
-	cursor = globals.storage_handle.cursor()
+	cursor = global_vars.storage_handle.cursor()
 	statement = 'DROP TABLE if exists "{0}"'.format(table_name)
 	cursor.execute(statement)
 # End of delete_table() ------------------------------------------------------
@@ -73,21 +73,21 @@ def create_table(table_name, *args):
 	# the sake of keeping the demo 'simple' we'll use this...'mess'.
 	#
 	# (See the note in delete_table() about why this is insecure.)
-	cursor = globals.storage_handle.cursor()
+	cursor = global_vars.storage_handle.cursor()
 	if len(args) == 0:
 		raise ValueError("No table description provided to storage.create_table()")
 	column_definitions = ', '.join(['{0} {1}'.format(column,type) for (column,type) in args])
 	statement = "CREATE TABLE {0} ({1})".format(table_name, column_definitions)
 	print statement
 	cursor.execute(statement)
-	globals.storage_handle.commit()
+	global_vars.storage_handle.commit()
 # End of create_table() ------------------------------------------------------
 
 
 @connect_then_disconnect
 def get_one(model_class, query_field, query_value):
 	# Hackish query, etc etc etc.
-	cursor = globals.storage_handle.cursor()
+	cursor = global_vars.storage_handle.cursor()
 	column_names = ','.join([column for (column,type) in model_class._get_field_definitions()])
 	statement = 'SELECT {0} FROM {1} WHERE {2}=?'.format(
 			column_names,
@@ -114,9 +114,9 @@ def upsert(model_class, **values):
 	prefix = 'INSERT OR REPLACE INTO "{0}" VALUES '.format(model_class.get_table_name())
 	placeholders = ', '.join([':{0}'.format(column) for (column, type) in model_class._get_field_definitions()])
 	statement = '{0} ({1})'.format(prefix, placeholders)
-	cursor = globals.storage_handle.cursor()
+	cursor = global_vars.storage_handle.cursor()
 	cursor.execute(statement, values)
-	globals.storage_handle.commit()
+	global_vars.storage_handle.commit()
 # End of upsert() ------------------------------------------------------------
 
 # EOF

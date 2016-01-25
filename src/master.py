@@ -16,19 +16,19 @@ import ConfigParser
 # Import custom libraries
 import api
 import config
-import globals
+import global_vars
 import storage
 
 
 def main():
 	config.parse_options()
-	globals.storage_handle = storage.connect(globals.db_filename)
-	globals.app_handle.run(
-		host=globals.bind_address,
-		port=globals.listen_port,
+	global_vars.storage_handle = storage.connect(global_vars.db_filename)
+	global_vars.app_handle.run(
+		host=global_vars.bind_address,
+		port=global_vars.listen_port,
 		debug=True
 	)
-	storage.close(globals.storage_handle)
+	storage.close(global_vars.storage_handle)
 	print "Received request for shutdown; halting."
 # End of main() --------------------------------------------------------------
 

@@ -14,7 +14,7 @@ import ConfigParser
 # Import custom libraries
 import api
 import config
-import globals
+import global_vars
 import storage
 
 
@@ -51,11 +51,11 @@ def create_new_tables(model_list):
 
 def main():
 	config.parse_options()
-	globals.storage_handle = storage.connect(globals.db_filename)
+	global_vars.storage_handle = storage.connect(global_vars.db_filename)
 	model_list = generate_model_list()
 	clear_tables(model_list)
 	create_new_tables(model_list)
-	storage.close(globals.storage_handle)
+	storage.close(global_vars.storage_handle)
 # End of main() --------------------------------------------------------------
 
 

@@ -10,17 +10,17 @@ from __future__ import absolute_import
 import flask
 
 # Import custom libraries
-import globals
+import global_vars
 import http_status_codes
 from api.v1.models import job
 
 
-globals.app_handle = flask.Flask('demo')  # @TODO: This initialization needs to happen elsewhere!
+global_vars.app_handle = flask.Flask('demo')  # @TODO: This initialization needs to happen elsewhere!
 
 
-@globals.app_handle.route('/debug')
+@global_vars.app_handle.route('/debug')
 def debug():
-	message = str(globals.app_handle.url_map)
+	message = str(global_vars.app_handle.url_map)
 	message += '\n'
 	message += flask.url_for('lookup_uuid', uuid=1234)
 	return message
@@ -31,7 +31,7 @@ def generate_route_string(suffix):
 
 
 
-@globals.app_handle.route(generate_route_string('/<uuid>'), methods=['GET'])
+@global_vars.app_handle.route(generate_route_string('/<uuid>'), methods=['GET'])
 def lookup_uuid(uuid=None):
 	if not uuid:
 		return ('Invalid UUID', http_status_codes.BAD_REQUEST)
@@ -47,7 +47,7 @@ def lookup_uuid(uuid=None):
 	#lookup_job = job.Job()
 	#return 'User requested to lookup Job ID "{0}"'.format(flask.request.)
 
-#@globals.app_handle.route(generate_route_string('/do'), methods=['POST'])
+#@global_vars.app_handle.route(generate_route_string('/do'), methods=['POST'])
 #def do_something():
 	# new_job = job.Job()
 	# new_job.dispatch()
