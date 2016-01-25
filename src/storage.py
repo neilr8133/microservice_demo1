@@ -25,9 +25,9 @@ def close(db_handle):
 
 
 def delete_table(table_name):
-	# Warning, insecure!  Would like to use prepared statements, but quick
-	# research suggests that dynamic table names are not supported (at least
-	# in MySQL: <http://stackoverflow.com/a/9252507>).  So, acknowledging
+	# Warning, insecure!  Would like to use parameterized statements, but
+	# table names cannot be parameterized (at least in MySQL: see
+	# <http://stackoverflow.com/a/9252507> and others).  So, acknowledging
 	# that we would want something better for Production (an ORM?), we'll
 	# be a little insecure here.
 	cursor = globals.storage_handle.cursor()
@@ -56,24 +56,27 @@ def create_table(table_name, *args):
 def get_one(table_name, query_field, query_value):
 	# Hackish query, etc etc etc.
 	cursor = globals.storage_handle.cursor()
-	statement = 'SELECT * FROM {0} WHERE ?=?'.format(table_name)
-	cursor.execute(statement, query_field, query_value)
+	statement = 'SELECT * FROM {0} WHERE {1}=?'.format(table_name, query_field)
+	# The oddity on the next line is because .execute() expects a tuple.
+	cursor.execute(statement, (query_value,))
 	return cursor.fetchone()
 # End of get_one() -----------------------------------------------------------
 
 
-def upsert(table_name, *args):
+def upsert(model_class, **values):
 	# Performs an 'update/insert' operation.
-	# See above for why we aren't using prepared statements and therefore this
-	# is less safe than we'd like (and should NEVER get near a Production
-	# system!)
-	if len(args) == 0:
+	if len(values) == 0:
 		raise ValueError("No values provided to storage.upsert()")
-	print args
+	# The clunky code here allows us to use SQL statements with named
+	# parameters--without hard-coding anything about the table ahead of time--
+	# and get rid of bugs like trying to insert an unquoted None and having
+	# SQLite think we want to copy the content of a column named 'None'...
+	
+	prefix = 'INSERT OR REPLACE INTO "{0}" VALUES '.format(model_class.get_table_name())
+	placeholders = ', '.join([':{0}'.format(column) for (column, type) in model_class._get_field_definitions()])
+	statement = '{0} ({1})'.format(prefix, placeholders)
 	cursor = globals.storage_handle.cursor()
-	statement = 'INSERT OR REPLACE INTO "{0}" VALUES {1}'.format(table_name, args)
-	print statement
-	cursor.execute(statement)
+	cursor.execute(statement, values)
 	globals.storage_handle.commit()
 # End of upsert() ------------------------------------------------------------
 

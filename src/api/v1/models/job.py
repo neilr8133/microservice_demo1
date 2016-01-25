@@ -79,8 +79,8 @@ class Job(object):
 	_field_definitions = [
 		# (column name, column type, default value)
 		('uuid', 'text primary key', None),  # Must be set later.
-		('status', 'integer', JobStatus.from_str('not_started')),
-		('result', 'integer', JobResult.from_str('not_finished')),
+		('status', 'text', 'not_started'),
+		('result', 'text', 'not_finished'),
 		('destination', 'text', None),
 	]
 	table_name = 'job'
@@ -139,13 +139,13 @@ class Job(object):
 	
 	def send_to_storage(self):
 		"""Send/update the current object to storage."""
-		this_obj = []
+		this_obj = {}
 		for tuple in Job._get_field_definitions():
 			# Invoke the 'get_*' method for all keys; if the answer is None
 			# then we omit it.
 			attribute = tuple[0]
-			this_obj.append(getattr(self, 'get_{0}'.format(attribute))())
-		storage.upsert(Job.get_table_name(), *this_obj)
+			this_obj[attribute] = getattr(self, 'get_{0}'.format(attribute))()
+		storage.upsert(Job, **this_obj)
 	# End send_to_storage() --------------------------------------------------
 	
 	
@@ -160,27 +160,23 @@ class Job(object):
 	
 	
 	def get_status(self):
-		return JobStatus.to_str(self.status)
+		return self.status
 	# End of get_status() ----------------------------------------------------
 	
 	
-	def set_status(self, numeric_code):
-		if not isinstance(numeric_code, int):
-			raise TypeError("Invoked set_status with type '{0}', expected int".format(type(numeric_code)))
-		self.status = numeric_code
+	def set_status(self, string):
+		self.status_code = string
 	# End of set_status() ----------------------------------------------------
 	
 	
 	def get_result(self):
-		return JobResult.to_str(self.result)
-	# End of get_status() ----------------------------------------------------
+		return self.result
+	# End of get_result_string() ---------------------------------------------
 	
 	
-	def set_result(self, result_code):
-		if not isinstance(result_code, int):
-			raise TypeError("Invoked set_result with type '{0}', expected int".format(type(result_code)))
-		self.result = result_code
-	# End of set_result() ----------------------------------------------------
+	def set_result(self, string):
+		self.result = string
+	# End of set_result_string() ---------------------------------------------
 	
 	
 	def get_destination(self):
