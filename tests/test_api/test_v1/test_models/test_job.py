@@ -107,6 +107,21 @@ class Test_JobStatus(object):
 
 
 class Test_Job_Model(object):
+	def setUp(self):
+		# Initialize in-memory storage
+		db_filename = ':memory:'
+		globals.storage_handle = storage.initialize(db_filename)
+		model_list = initialize.generate_model_list()
+		initialize.clear_tables(model_list)
+		initialize.create_new_tables(model_list)
+	# End of setUp() ---------------------------------------------------------
+	
+	
+	def tearDown(self):
+		storage.close(globals.storage_handle)
+	# End of tearDown() ------------------------------------------------------
+	
+	
 	def test_dump_json_of_new_object(self):
 		"""Job_Model: Dumping JSON of a newly-created object produces expected format"""
 		one_job = job.Job()
@@ -117,22 +132,25 @@ class Test_Job_Model(object):
 	
 	def test_job_serializes_to_database(self):
 		"""Job_Model: object serializes to database system correctly"""
-		# Initialize in-memory storage
-		db_filename = ':memory:'
-		globals.storage_handle = storage.initialize(db_filename)
-		model_list = initialize.generate_model_list()
-		initialize.clear_tables(model_list)
-		initialize.create_new_tables(model_list)
 		# Create the simulated job and serialize it to storage.
 		new_job = job.Job()
 		new_job.send_to_storage()
 		# Compare what was stored with the original object.
-		stored_row = storage.get_one(new_job.get_table_name(), 'uuid', new_job.get_uuid())
+		stored_row = storage.get_one(job.Job, 'uuid', new_job.get_uuid())
 		assert new_job.get_uuid() == stored_row[0]
 		assert new_job.get_status() == stored_row[1]
 		assert new_job.get_result() == stored_row[2]
 		assert new_job.get_destination() == stored_row[3]
-		storage.close(globals.storage_handle)
+	
+	def test_job_reconstituted_from_database(self):
+		"""Job_Model: successful reconsitution from database system"""
+		new_job = job.Job()
+		new_job.send_to_storage()
+		reconstituted_job = job.Job.from_storage(new_job.get_uuid())
+		assert new_job.get_uuid() == reconstituted_job.get_uuid()
+		assert new_job.get_status() == reconstituted_job.get_status()
+		assert new_job.get_result() == reconstituted_job.get_result()
+		assert new_job.get_destination() == reconstituted_job.get_destination()
 # End of class Test_Job_Model ================================================
 
 # EOF
