@@ -50,4 +50,28 @@ def create_table(table_name, **kwargs):
 	globals.storage_handle.commit()
 # End of create_table() ------------------------------------------------------
 
+
+def get_one(table_name, query_field, query_value):
+	# Hackish query, etc etc etc.
+	cursor = globals.storage_handle.cursor()
+	statement = 'SELECT * FROM {0} WHERE ?=?'.format(table_name)
+	cursor.execute(statement, query_field, query_value)
+	return cursor.fetchone()
+# End of get_one() -----------------------------------------------------------
+
+
+def upsert(table_name, key, key_value, **kwargs):
+	# Performs an 'update/insert' operation.
+	# See above for why we aren't using prepared statements and therefore this
+	# is less safe than we'd like (and should NEVER get near a Production
+	# system!)
+	if len(kwargs) == 0:
+		raise ValueError("No values provided to storage.upsert()")
+	values = ','.join(['{0} {1}'.format(k,v) for k,v in kwargs.items()])
+	cursor = globals.storage_handle.cursor()
+	statement = 'INSERT OR REPLACE INTO "{0}" VALUES ({1})'.format(table_name, values)
+	cursor.execute(statement)
+	globals.storage_handle.commit()
+# End of upsert() ------------------------------------------------------------
+
 # EOF
