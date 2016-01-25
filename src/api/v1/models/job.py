@@ -8,7 +8,7 @@ import json
 import uuid
 
 # Import third-party libraries
-# (None)
+import requests
 
 # Import custom libraries
 import storage
@@ -73,11 +73,12 @@ class JobStatus(object):
 class Job(object):
 	
 	# Class-level definitions
-	# For storage purposes, identify the attributes that should persist.
+	# Identify the attributes that should persist in external storage.
 	_field_definitions = {
-		'result': 'text',
 		'status': 'text',
 		'uuid': 'text',
+		'result': 'text',
+		'destination': 'text',
 	}
 	
 	def __init__(self):
@@ -85,7 +86,7 @@ class Job(object):
 		self._status_code = JobStatus.from_str('not_started')
 		self._uuid = str(uuid.uuid4())
 		self._result = None
-		self.destination = None
+		self._destination = None
 	# End of __init__() ------------------------------------------------------
 	
 	
@@ -118,12 +119,12 @@ class Job(object):
 	
 	
 	def get_destination(self):
-		return self.destination
+		return self._destination
 	# End of get_destination() -----------------------------------------------
 	
 	
 	def set_destination(self, target_ip):
-		self.destination = target_ip
+		self._destination = target_ip
 	# End of set_destination() -----------------------------------------------
 	
 	
