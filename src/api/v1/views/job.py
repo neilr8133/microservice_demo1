@@ -41,14 +41,18 @@ def help():
 	for each_method in allowed_methods:
 		(function_name, function_args) = each_method
 		print "Looking up {}".format(function_name)
-		print globals()
 		response_list.append(flask.url_for('{}'.format(function_name), **function_args))
-		function_pointer = locals()[function_name]
-		response_list.append(getattr(function_pointer, '__doc__', ''))
+		print response_list
+		function_pointer = globals()[function_name]
+		# If function has no docstring, getattr('__doc__') returns None...
+		docstring = getattr(function_pointer, '__doc__')
+		if docstring:
+			print "{} has docstring".format(function_pointer.__name__)
+			response_list.append(getattr(function_pointer, '__doc__').strip())
+		else:
+			response_list.append("(No additional documentation available)")
+		response_list.append('\n')
 	response = '\n'.join(response_list)
-	#response = '\n'.join(
-	#		[flask.url_for('{}'.format(name), **param) for (name, param) in allowed_methods]
-	#)
 	return response
 # End of help() --------------------------------------------------------------
 
