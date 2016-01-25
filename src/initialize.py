@@ -43,21 +43,21 @@ def clear_tables(definitions):
 
 
 def create_new_tables(definitions):
-	for each_tuple in definitions:
-		print "Creating table '{0}'".format(each_tuple[0])
+	for table_def in definitions:
+		print "Creating table '{0}'".format(table_def[0])
 		storage.create_table(
-				each_tuple[0],
-				*each_tuple[1]._get_field_definitions())
+				table_def[0],
+				*table_def[1]._get_field_definitions())
 # End of create_new_tables() -------------------------------------------------
 
 
 def main():
 	config.parse_options()
-	storage.initialize()
+	globals.storage_handle = storage.initialize(globals.db_filename)
 	definitions = generate_table_definitions()
 	clear_tables(definitions)
 	create_new_tables(definitions)
-	storage.close()
+	storage.close(globals.storage_handle)
 # End of main() --------------------------------------------------------------
 
 
