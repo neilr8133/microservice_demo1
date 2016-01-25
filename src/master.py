@@ -22,7 +22,7 @@ import storage
 
 def main():
 	config.parse_options()
-	globals.storage_handle = storage.initialize(globals.db_filename)
+	globals.storage_handle = storage.connect(globals.db_filename)
 	globals.app_handle.run(
 		host=globals.bind_address,
 		port=globals.listen_port,

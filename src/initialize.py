@@ -51,7 +51,7 @@ def create_new_tables(model_list):
 
 def main():
 	config.parse_options()
-	globals.storage_handle = storage.initialize(globals.db_filename)
+	globals.storage_handle = storage.connect(globals.db_filename)
 	model_list = generate_model_list()
 	clear_tables(model_list)
 	create_new_tables(model_list)

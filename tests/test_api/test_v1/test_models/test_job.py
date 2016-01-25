@@ -108,9 +108,11 @@ class Test_JobStatus(object):
 
 class Test_Job_Model(object):
 	def setUp(self):
-		# Initialize in-memory storage
-		db_filename = ':memory:'
-		globals.storage_handle = storage.initialize(db_filename)
+		# Initialize temporary storage
+		# Because storage has to open/close connection with every access (UGH),
+		# we can't use ':memory:' or else we lose the DB after every command..
+		# UGH!
+		globals.db_filename = 'DELETE_ME__unittest.db'
 		model_list = initialize.generate_model_list()
 		initialize.clear_tables(model_list)
 		initialize.create_new_tables(model_list)
