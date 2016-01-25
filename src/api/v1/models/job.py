@@ -122,7 +122,7 @@ class Job(object):
 		@param[in] uuid UUID of the stored job to reconstruct.
 		@return An instance of Job populated by the specified stored contents.
 		"""
-		row = storage.get_one(Job.get_table_name(), 'uuid', uuid)
+		row = storage.get_one(Job, 'uuid', uuid)
 		if not row:
 			return ValueError("UUID '{0}' was not found in storage".format(uuid))
 		new_job = Job()
@@ -133,7 +133,7 @@ class Job(object):
 			attribute_setter = getattr(new_job, 'set_{0}'.format(attribute_name))
 			
 			attribute_setter(attribute_value)
-			new_job.setter(value)
+		return new_job
 	# End of from_storage() --------------------------------------------------
 	
 	
