@@ -121,6 +121,7 @@ class Test_Job_Model(object):
 		db_filename = ':memory:'
 		globals.storage_handle = storage.initialize(db_filename)
 		model_list = initialize.generate_model_list()
+		initialize.clear_tables(model_list)
 		initialize.create_new_tables(model_list)
 		# Create the simulated job and serialize it to storage.
 		new_job = job.Job()
