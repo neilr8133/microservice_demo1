@@ -10,9 +10,9 @@ from __future__ import absolute_import
 import flask
 
 # Import custom libraries
-from api.v1.models import job
 import globals
 import http_status_codes
+from api.v1.models import job
 
 
 globals.app_handle = flask.Flask('demo')  # @TODO: This initialization needs to happen elsewhere!
