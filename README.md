@@ -44,7 +44,7 @@ Create (and activate) a virtualenv:
 		$ virtualenv ./venv
 		$ . ./venv/scripts/activate
 
-(or, if you're on Windows (this is one of the few commands that will be different)):
+Or, if you're on Windows (this is one of the few commands that will be different):
 
 		> .\\venv\\scripts\\activate.bat
 
@@ -63,6 +63,17 @@ lingering jobs):
 
 		(venv) $ cd src
 		(venv) $ python initialize.py
+
+## Usage
+
+To start the master:
+
+		(venv) $ python master.py
+
+To get a list of the available endpoints, you can query the master itself:
+
+		(venv) $ http localhost:8010/
+
 
 ## Testing
 

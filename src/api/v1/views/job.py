@@ -30,8 +30,13 @@ def generate_route_string(suffix):
 	return '/ask_a_minion/v1{0}'.format(suffix)
 
 
-@global_vars.app_handle.route(generate_route_string('/'), methods=['GET'])
-def help():
+# For this simple demo, manually register the root path and a few others to
+# display the API quick-reference for.
+@global_vars.app_handle.route('/', methods=['GET'])
+@global_vars.app_handle.route('/ask_a_minion/', methods=['GET'])
+@global_vars.app_handle.route('/ask_a_minion/v1/', methods=['GET'])
+def api_help():
+	# Generate message that gets displayed if an invalid URL is hit.
 	allowed_methods = [
 		('lookup_uuid', {'uuid': '00000000-00000000-00000000-00000000'}),
 		('time', {}),
@@ -51,7 +56,7 @@ def help():
 			response_list.append(getattr(function_pointer, '__doc__').strip())
 		else:
 			response_list.append("(No additional documentation available)")
-		response_list.append('\n')
+		response_list.append('')  # Causes a blank line to be added to output
 	response = '\n'.join(response_list)
 	return response
 # End of help() --------------------------------------------------------------
