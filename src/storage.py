@@ -13,13 +13,14 @@ import sqlite3
 import globals
 
 
-def initialize():
-	globals.storage_handle = sqlite3.connect(globals.db_filename)
+def initialize(db_filename):
+	return sqlite3.connect(db_filename)
 # End of initialize() --------------------------------------------------------
 
 
-def close():
-	globals.storage_handle.close()
+def close(db_handle):
+	db_handle.close()
+	db_handle = None
 # End of close() -------------------------------------------------------------
 
 
