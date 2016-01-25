@@ -35,16 +35,16 @@ def delete_table(table_name):
 # End of delete_table() ------------------------------------------------------
 
 
-def create_table(table_name, **kwargs):
+def create_table(table_name, *args):
 	# Hackish way to create a database; a strong argument could
 	# be made that we should be using SQLAlchemy or some other ORM, but for
 	# the sake of keeping the demo 'simple' we'll use this...'mess'.
 	#
 	# (See the note in delete_table() about why this is insecure.)
 	cursor = globals.storage_handle.cursor()
-	if len(kwargs) == 0:
+	if len(args) == 0:
 		raise ValueError("No table description provided to storage.create_table()")
-	column_definitions = ','.join(['{0} {1}'.format(k,v) for k,v in kwargs.items()])
+	column_definitions = ','.join(['{0} {1}'.format(column,type) for (column,type) in args])
 	cursor.execute(
 		"CREATE TABLE {0} ({1})".format(table_name, column_definitions))
 	globals.storage_handle.commit()
@@ -60,16 +60,15 @@ def get_one(table_name, query_field, query_value):
 # End of get_one() -----------------------------------------------------------
 
 
-def upsert(table_name, key, key_value, **kwargs):
+def upsert(table_name, *args):
 	# Performs an 'update/insert' operation.
 	# See above for why we aren't using prepared statements and therefore this
 	# is less safe than we'd like (and should NEVER get near a Production
 	# system!)
 	if len(kwargs) == 0:
 		raise ValueError("No values provided to storage.upsert()")
-	values = ','.join(['{0} {1}'.format(k,v) for k,v in kwargs.items()])
 	cursor = globals.storage_handle.cursor()
-	statement = 'INSERT OR REPLACE INTO "{0}" VALUES ({1})'.format(table_name, values)
+	statement = 'INSERT OR REPLACE INTO "{0}" VALUES ({1})'.format(table_name, *args)
 	cursor.execute(statement)
 	globals.storage_handle.commit()
 # End of upsert() ------------------------------------------------------------

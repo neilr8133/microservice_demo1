@@ -47,7 +47,7 @@ def create_new_tables(definitions):
 		print "Creating table '{0}'".format(each_tuple[0])
 		storage.create_table(
 				each_tuple[0],
-				**each_tuple[1]._get_field_definitions())
+				*each_tuple[1]._get_field_definitions())
 # End of create_new_tables() -------------------------------------------------
 
 
