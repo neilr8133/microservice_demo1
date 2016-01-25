@@ -47,16 +47,23 @@ def create_table(table_name, *args):
 		raise ValueError("No table description provided to storage.create_table()")
 	column_definitions = ','.join(['{0} {1}'.format(column,type) for (column,type) in args])
 	statement = "CREATE TABLE {0} ({1})".format(table_name, column_definitions)
-	print statement
+	# print statement
 	cursor.execute(statement)
 	globals.storage_handle.commit()
 # End of create_table() ------------------------------------------------------
 
 
-def get_one(table_name, query_field, query_value):
+def get_one(model_class, query_field, query_value):
 	# Hackish query, etc etc etc.
 	cursor = globals.storage_handle.cursor()
-	statement = 'SELECT * FROM {0} WHERE {1}=?'.format(table_name, query_field)
+	column_names = ','.join([column for (column,type) in model_class._get_field_definitions()])
+	statement = 'SELECT {0} FROM {1} WHERE {2}=?'.format(
+			column_names,
+			model_class.get_table_name(),
+			query_field,
+	)
+	# print statement
+	# print query_value
 	# The oddity on the next line is because .execute() expects a tuple.
 	cursor.execute(statement, (query_value,))
 	return cursor.fetchone()
