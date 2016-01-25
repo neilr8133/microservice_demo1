@@ -17,6 +17,7 @@ class Test_JobResult(object):
 	def __init__(self):
 		# Define the list of results we expect to find
 		self.result_list = [
+			'not_finished',
 			'success',
 			'error',
 			'abort',
@@ -106,7 +107,7 @@ class Test_Job_Model(object):
 	@nose.tools.raises(TypeError)
 	def test_setstatus_disallows_strings(self):
 		"""Job_Model: Verify that _set_status disallows string values"""
-		job.Job()._set_status('a')
+		job.Job().set_status('a')
 	# End of test_setstatus_disallows_strings() ------------------------------
 	
 	
@@ -114,7 +115,7 @@ class Test_Job_Model(object):
 		"""Job_Model: Verify that _set_status allows (possibly invalid) integer values"""
 		one_job = job.Job()
 		status_code = 0
-		one_job._set_status(status_code)
+		one_job.set_status(status_code)
 		assert one_job.get_status() == job.JobStatus.to_str(status_code)
 	# End of test_setstatus_accepts_integers() -------------------------------
 	

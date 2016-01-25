@@ -19,6 +19,7 @@ class JobResult(object):
 	# JobResult only refers to jobs that have finished running.
 	
 	_result_names = [
+		'not_finished',  # Hasn't finished yet.
 		'success', # No error detected
 		'error',   # Some error detected
 		'abort',   # Job was aborted by external signal
@@ -73,80 +74,120 @@ class JobStatus(object):
 class Job(object):
 	
 	# Class-level definitions
-	# Identify the attributes that should persist in external storage.
-	_field_definitions = {
-		'status': 'text',
-		'uuid': 'text',
-		'result': 'text',
-		'destination': 'text',
-	}
+	# Identify the attributes that should persist in external storage.  The
+	# first entry will be the Primary Key for the table.
+	# (Each definition key must also have get_* and set_* methods.)
+	_field_definitions = [
+		# (column name, column type, default value)
+		('uuid', 'text', None),  # Must be set later.
+		('status', 'integer', JobStatus.from_str('not_started')),
+		('result', 'integer', JobResult.from_str('not_finished')),
+		('destination', 'text', None),
+	]
 	
 	def __init__(self):
-		# If more fields are added, remember to update get_json().
-		self._status_code = JobStatus.from_str('not_started')
-		self._uuid = str(uuid.uuid4())
-		self._result = None
-		self._destination = None
+		# Initialize all fields to their defaults.
+		for tuple in Job._get_default_values():
+			setattr(self, tuple[0], tuple[1])
+		
+		# Now perform custom initalization.
+		# (Since this is a unique value per instance, we can't set it in the
+		# defaults up above.)
+		self.set_uuid(str(uuid.uuid4()))
 	# End of __init__() ------------------------------------------------------
 	
 	
 	@staticmethod
 	def _get_field_definitions():
-		return Job._field_definitions
-	# End of _get_table_representation() -------------------------------------
+		# As noted above, the first tuple is the primary key.
+		return [(column, type) for (column, type, default) in Job._field_definitions]
+	# End of _get_field_definitions() -------------------------------------
+	
+	@staticmethod
+	def _get_default_values():
+		return [(column, default) for (column, type, default) in Job._field_definitions]
+	# End of _get_default_values() -------------------------------------------
+				
+				# @staticmethod
+				# def _configure_storage()
+				
+				
+				# def store(self):
+					# """Send/update the current object to storage."""
+					
+				# # End store() ------------------------------------------------------------
 	
 	
 	def get_uuid(self):
-		return self._uuid
+		return self.uuid
 	# End of get_uuid() ------------------------------------------------------
 	
 	
+	def set_uuid(self, uuid):
+		self.uuid = uuid
+	# End of set_uuid() ------------------------------------------------------
+	
+	
 	def get_status(self):
-		return JobStatus.to_str(self._status_code)
+		return JobStatus.to_str(self.status)
 	# End of get_status() ----------------------------------------------------
 	
 	
-	def _set_status(self, numeric_code):
+	def set_status(self, numeric_code):
 		if not isinstance(numeric_code, int):
-			raise TypeError("Invoked _set_status with type '{0}', expected int".format(type(numeric_code)))
-		self._status_code = numeric_code
-	# End of get_status() ----------------------------------------------------
+			raise TypeError("Invoked set_status with type '{0}', expected int".format(type(numeric_code)))
+		self.status = numeric_code
+	# End of set_status() ----------------------------------------------------
 	
 	
 	def get_result(self):
-		return self._result
+		return JobResult.to_str(self.result)
 	# End of get_status() ----------------------------------------------------
 	
 	
+	def set_result(self, result_code):
+		if not isinstance(result_code, int):
+			raise TypeError("Invoked set_result with type '{0}', expected int".format(type(result_code)))
+		self.result = result_code
+	# End of set_result() ----------------------------------------------------
+	
+	
 	def get_destination(self):
-		return self._destination
+		return self.destination
 	# End of get_destination() -----------------------------------------------
 	
 	
 	def set_destination(self, target_ip):
-		self._destination = target_ip
+		self.destination = target_ip
 	# End of set_destination() -----------------------------------------------
 	
 	
 	def get_json(self):
-		this_obj = {
-				'status': self.get_status(),
-				'uuid': self.get_uuid(),
-		}
-		if self.get_result():
-			this_obj['result'] = self.get_result()
-		json_obj = json.dumps(
+		"""Dump an object to JSON format for reporting to client.
+		
+		Only values that are not None are returned.
+		
+		@return A JSON-formatted object.
+		"""
+		this_obj = {}
+		for tuple in Job._get_field_definitions():
+			# Invoke the 'get_*' method for all keys; if the answer is None
+			# then we omit it.
+			attribute = tuple[0]
+			result = getattr(self, 'get_{0}'.format(attribute))()
+			if result:
+				this_obj[attribute] = result
+		return json.dumps(
 			this_obj,
 			sort_keys=True,
 			indent=4,
 			separators=(',', ': '),
 		)
-		return json_obj
 	# End of get_json() ------------------------------------------------------
 	
 	
 	def dispatch(self):
-		self._set_status(JobStatus.from_str('pending'))
+		self.set_status(JobStatus.from_str('pending'))
 		print "Would dispatch job '{0}' to minion at '{1}'".format(self.get_uuid(), self.get_destination())
 # End of class Job ===========================================================
 
