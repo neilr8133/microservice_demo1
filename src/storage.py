@@ -69,8 +69,9 @@ def upsert(table_name, *args):
 	# system!)
 	if len(args) == 0:
 		raise ValueError("No values provided to storage.upsert()")
+	print args
 	cursor = globals.storage_handle.cursor()
-	statement = 'INSERT OR REPLACE INTO "{0}" VALUES ({1})'.format(table_name, *args)
+	statement = 'INSERT OR REPLACE INTO "{0}" VALUES {1}'.format(table_name, args)
 	print statement
 	cursor.execute(statement)
 	globals.storage_handle.commit()

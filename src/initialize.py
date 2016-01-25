@@ -18,45 +18,43 @@ import globals
 import storage
 
 
-def generate_table_definitions():
-	"""Return a dictionary of tables and definitions we'll be storing.
+def generate_model_list():
+	"""Return a list of models whose definitions we'll be storing.
 	
 	This method should be updated when new models are added.
 	
-	@return Dictionary keyed by table names with value being the table
-	        definitions.
+	@return List of model classes.
 	"""
 	
 	models = [
-		# (table name, class name)
-		('job', api.v1.models.job.Job),
+		api.v1.models.job.Job,
 	]
 	return models
-# End of generate_table_definitions() ----------------------------------------
+# End of generate_model_list() -----------------------------------------------
 
 
-def clear_tables(definitions):
+def clear_tables(model_list):
 	print "Clearing old tables..."
-	for each_tuple in definitions:
-		storage.delete_table(each_tuple[0])
+	for each_model in model_list:
+		storage.delete_table(each_model.get_table_name())
 # End of clear_tables() ------------------------------------------------------
 
 
-def create_new_tables(definitions):
-	for table_def in definitions:
-		print "Creating table '{0}'".format(table_def[0])
+def create_new_tables(model_list):
+	for each_model in model_list:
+		print "Creating table '{0}'".format(each_model.get_table_name())
 		storage.create_table(
-				table_def[0],
-				*table_def[1]._get_field_definitions())
+				each_model.get_table_name(),
+				*each_model._get_field_definitions())
 # End of create_new_tables() -------------------------------------------------
 
 
 def main():
 	config.parse_options()
 	globals.storage_handle = storage.initialize(globals.db_filename)
-	definitions = generate_table_definitions()
-	clear_tables(definitions)
-	create_new_tables(definitions)
+	model_list = generate_model_list()
+	clear_tables(model_list)
+	create_new_tables(model_list)
 	storage.close(globals.storage_handle)
 # End of main() --------------------------------------------------------------
 

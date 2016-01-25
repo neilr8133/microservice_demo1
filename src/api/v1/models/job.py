@@ -83,6 +83,7 @@ class Job(object):
 		('result', 'integer', JobResult.from_str('not_finished')),
 		('destination', 'text', None),
 	]
+	table_name = 'job'
 	
 	def __init__(self):
 		# Initialize all fields to their defaults.
@@ -97,9 +98,15 @@ class Job(object):
 	
 	
 	@staticmethod
+	def get_table_name():
+		return Job.table_name
+	# End of get_table_name() ------------------------------------------------
+	
+	
+	@staticmethod
 	def _get_field_definitions():
 		return [(column, type) for (column, type, default) in Job._field_definitions]
-	# End of _get_field_definitions() -------------------------------------
+	# End of _get_field_definitions() ----------------------------------------
 	
 	
 	@staticmethod
@@ -115,7 +122,7 @@ class Job(object):
 		@param[in] uuid UUID of the stored job to reconstruct.
 		@return An instance of Job populated by the specified stored contents.
 		"""
-		row = storage.get_one('job', 'uuid', uuid)
+		row = storage.get_one(Job.get_table_name(), 'uuid', uuid)
 		if not row:
 			return ValueError("UUID '{0}' was not found in storage".format(uuid))
 		new_job = Job()
@@ -137,8 +144,8 @@ class Job(object):
 			# Invoke the 'get_*' method for all keys; if the answer is None
 			# then we omit it.
 			attribute = tuple[0]
-			this_obj.append(getattr(self, 'get_{0}'.format(attribute)))
-		storage.upsert('job', *this_obj)
+			this_obj.append(getattr(self, 'get_{0}'.format(attribute))())
+		storage.upsert(Job.get_table_name(), *this_obj)
 	# End send_to_storage() --------------------------------------------------
 	
 	
