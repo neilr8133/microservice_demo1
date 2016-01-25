@@ -105,8 +105,51 @@ class Test_JobStatus(object):
 # End of class Test_JobStatus ================================================
 
 
+class Test_Job_Model_Without_Database(object):
+	def setUp(self):
+		self.a_job = job.Job()
+	# End of setUp() ---------------------------------------------------------
+	
+	
+	def test_set_status_updates_internal_sturcture(self):
+		"""Job_Model: set_status updates internal structures"""
+		self.a_job.set_status('finished')
+		assert 'finished' == self.a_job.status
+	# End of test_set_status() -----------------------------------------------
+	
+	
+	def test_get_status_reads_internal_sturcture(self):
+		"""Job_Model: set_status updates internal structures"""
+		self.a_job.status = 'pending'
+		assert 'pending' == self.a_job.get_status()
+	# End of test_set_status() -----------------------------------------------
+	
+	
+	def test_set_status_updates_internal_sturcture(self):
+		"""Job_Model: set_result updates internal structures"""
+		self.a_job.set_result('success')
+		assert 'success' == self.a_job.result
+	# End of test_set_result() -----------------------------------------------
+	
+	
+	def test_get_result_reads_internal_sturcture(self):
+		"""Job_Model: set_result updates internal structures"""
+		self.a_job.result = 'failure'
+		assert 'failure' == self.a_job.get_result()
+	# End of test_set_result() -----------------------------------------------
+	
+	
+	def test_dump_json_of_new_object(self):
+		"""Job_Model: Dumping JSON of a newly-created object produces expected format"""
+		one_job = job.Job()
+		dumped_obj = json.loads(one_job.get_json())
+		assert dumped_obj['status'] == 'not_started'
+	# End of test_dump_json_of_new_object() ----------------------------------
+# End of class Test_Job_Model_Without_Database ===============================
 
-class Test_Job_Model(object):
+
+
+class Test_Job_Model_With_Database(object):
 	def setUp(self):
 		# Initialize temporary storage
 		# Because storage has to open/close connection with every access (UGH),
@@ -124,14 +167,6 @@ class Test_Job_Model(object):
 	# End of tearDown() ------------------------------------------------------
 	
 	
-	def test_dump_json_of_new_object(self):
-		"""Job_Model: Dumping JSON of a newly-created object produces expected format"""
-		one_job = job.Job()
-		dumped_obj = json.loads(one_job.get_json())
-		assert dumped_obj['status'] == 'not_started'
-	# End of test_dump_json_of_new_object() ----------------------------------
-	
-	
 	def test_job_serializes_to_database(self):
 		"""Job_Model: object serializes to database system correctly"""
 		# Create the simulated job and serialize it to storage.
@@ -143,6 +178,8 @@ class Test_Job_Model(object):
 		assert new_job.get_status() == stored_row[1]
 		assert new_job.get_result() == stored_row[2]
 		assert new_job.get_destination() == stored_row[3]
+	# End of test_job_serializes_to_database() -------------------------------
+	
 	
 	def test_job_reconstituted_from_database(self):
 		"""Job_Model: successful reconsitution from database system"""
@@ -153,6 +190,7 @@ class Test_Job_Model(object):
 		assert new_job.get_status() == reconstituted_job.get_status()
 		assert new_job.get_result() == reconstituted_job.get_result()
 		assert new_job.get_destination() == reconstituted_job.get_destination()
+	# End of test_job_reconstituted_from_database() --------------------------
 # End of class Test_Job_Model ================================================
 
 # EOF

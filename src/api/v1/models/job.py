@@ -167,7 +167,7 @@ class Job(object):
 	
 	
 	def set_status(self, string):
-		self.status_code = string
+		self.status = string
 	# End of set_status() ----------------------------------------------------
 	
 	
