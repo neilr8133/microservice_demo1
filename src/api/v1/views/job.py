@@ -30,6 +30,28 @@ def generate_route_string(suffix):
 	return '/ask_a_minion/v1{0}'.format(suffix)
 
 
+@global_vars.app_handle.route(generate_route_string('/'), methods=['GET'])
+def help():
+	allowed_methods = [
+		('lookup_uuid', {'uuid': '00000000-00000000-00000000-00000000'}),
+		('time', {}),
+	]
+	# response = flask.url_for('lookup_uuid', **allowed_methods[0][1])
+	response_list = []
+	for each_method in allowed_methods:
+		(function_name, function_args) = each_method
+		print "Looking up {}".format(function_name)
+		print globals()
+		response_list.append(flask.url_for('{}'.format(function_name), **function_args))
+		function_pointer = locals()[function_name]
+		response_list.append(getattr(function_pointer, '__doc__', ''))
+	response = '\n'.join(response_list)
+	#response = '\n'.join(
+	#		[flask.url_for('{}'.format(name), **param) for (name, param) in allowed_methods]
+	#)
+	return response
+# End of help() --------------------------------------------------------------
+
 
 @global_vars.app_handle.route(generate_route_string('/<uuid>'), methods=['GET'])
 def lookup_uuid(uuid=None):
@@ -43,15 +65,17 @@ def lookup_uuid(uuid=None):
 			'message': "UUID '{0}' not valid".format(uuid)
 		}
 		return (str(message_obj), http_status_codes.BAD_REQUEST)
-		#return (message_obj, http_status_codes.BAD_REQUEST)
-	#lookup_job = job.Job()
 	#return 'User requested to lookup Job ID "{0}"'.format(flask.request.)
 
-#@global_vars.app_handle.route(generate_route_string('/do'), methods=['POST'])
-#def do_something():
-	# new_job = job.Job()
-	# new_job.dispatch()
-	
+
+@global_vars.app_handle.route(generate_route_string('/time'), methods=['POST'])
+def time():
+	"""Query the minion for the current time.
+	"""
+	return "Would query the time on a remote computer."
+# End of time() --------------------------------------------------------------
+
+
 # GET  /ask_a_minion/v1/<UUID>
 # POST /ask_a_minion/v1/time   JSON: delay=TT (seconds)                 returns UUID, then current time (after delay expires)
 # POST /ask_a_minion/v1/magic8ball  JSON: delay=TT (seconds) query=??   returns UUID, then Yes/No/Maybe
