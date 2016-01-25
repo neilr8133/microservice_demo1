@@ -35,6 +35,14 @@ def generate_route_string(suffix):
 def lookup_uuid(uuid=None):
 	if not uuid:
 		return (http_status_codes.BAD_REQUEST, 'Invalid UUID')
+	lookup_job = job.Job.from_storage(uuid)
+	if not lookup_job:
+		message_obj = {
+			'status': 'not_started',
+			'result': 'error',
+			'message': "UUID '{0}' not valid".format(uuid)
+		}
+		return (http_status_codes.BAD_REQUEST, message_obj)
 	#lookup_job = job.Job()
 	#return 'User requested to lookup Job ID "{0}"'.format(flask.request.)
 

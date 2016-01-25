@@ -124,7 +124,9 @@ class Job(object):
 		"""
 		row = storage.get_one(Job, 'uuid', uuid)
 		if not row:
-			return ValueError("UUID '{0}' was not found in storage".format(uuid))
+			# raise ValueError("UUID '{0}' was not found in storage".format(uuid))
+			# Let's be a little more gentle.
+			return None
 		new_job = Job()
 		for tuple in zip(Job._get_field_definitions(), row):
 			# Invoke the 'get_*' method for all keys.
