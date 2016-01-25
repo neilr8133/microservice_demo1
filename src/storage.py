@@ -66,7 +66,7 @@ def upsert(table_name, *args):
 	# See above for why we aren't using prepared statements and therefore this
 	# is less safe than we'd like (and should NEVER get near a Production
 	# system!)
-	if len(kwargs) == 0:
+	if len(args) == 0:
 		raise ValueError("No values provided to storage.upsert()")
 	cursor = globals.storage_handle.cursor()
 	statement = 'INSERT OR REPLACE INTO "{0}" VALUES ({1})'.format(table_name, *args)
