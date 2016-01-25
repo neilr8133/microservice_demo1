@@ -46,8 +46,9 @@ def create_table(table_name, *args):
 	if len(args) == 0:
 		raise ValueError("No table description provided to storage.create_table()")
 	column_definitions = ','.join(['{0} {1}'.format(column,type) for (column,type) in args])
-	cursor.execute(
-		"CREATE TABLE {0} ({1})".format(table_name, column_definitions))
+	statement = "CREATE TABLE {0} ({1})".format(table_name, column_definitions)
+	print statement
+	cursor.execute(statement)
 	globals.storage_handle.commit()
 # End of create_table() ------------------------------------------------------
 
@@ -70,6 +71,7 @@ def upsert(table_name, *args):
 		raise ValueError("No values provided to storage.upsert()")
 	cursor = globals.storage_handle.cursor()
 	statement = 'INSERT OR REPLACE INTO "{0}" VALUES ({1})'.format(table_name, *args)
+	print statement
 	cursor.execute(statement)
 	globals.storage_handle.commit()
 # End of upsert() ------------------------------------------------------------
