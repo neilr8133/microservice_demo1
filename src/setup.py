@@ -27,9 +27,6 @@ setup(
 		'requests',
 	],
 	packages = find_packages(),
-	# scripts = [
-		# 'main.py',
-	# ],
 )
 
 # EOF
