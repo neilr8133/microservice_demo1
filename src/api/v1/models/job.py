@@ -101,19 +101,45 @@ class Job(object):
 		return [(column, type) for (column, type, default) in Job._field_definitions]
 	# End of _get_field_definitions() -------------------------------------
 	
+	
 	@staticmethod
 	def _get_default_values():
 		return [(column, default) for (column, type, default) in Job._field_definitions]
 	# End of _get_default_values() -------------------------------------------
-				
-				# @staticmethod
-				# def _configure_storage()
-				
-				
-				# def store(self):
-					# """Send/update the current object to storage."""
-					
-				# # End store() ------------------------------------------------------------
+	
+	
+	@staticmethod
+	def from_storage(uuid):
+		"""Build a Job object based on an entry in storage.
+		
+		@param[in] uuid UUID of the stored job to reconstruct.
+		@return An instance of Job populated by the specified stored contents.
+		"""
+		row = storage.get_one('job', 'uuid', uuid)
+		if not row:
+			return ValueError("UUID '{0}' was not found in storage".format(uuid))
+		new_job = Job()
+		for tuple in zip(Job._get_field_definitions(), row):
+			# Invoke the 'get_*' method for all keys.
+			attribute_name = tuple[0][0]
+			attribute_value = tuple[1]
+			attribute_setter = getattr(new_job, 'set_{0}'.format(attribute_name))
+			
+			attribute_setter(attribute_value)
+			new_job.setter(value)
+	# End of from_storage() --------------------------------------------------
+	
+	
+	def send_to_storage(self):
+		"""Send/update the current object to storage."""
+		this_obj = []
+		for tuple in Job._get_field_definitions():
+			# Invoke the 'get_*' method for all keys; if the answer is None
+			# then we omit it.
+			attribute = tuple[0]
+			this_obj.append(getattr(self, 'get_{0}'.format(attribute)))
+		storage.upsert('job', *this_obj)
+	# End send_to_storage() --------------------------------------------------
 	
 	
 	def get_uuid(self):
