@@ -74,12 +74,11 @@ class JobStatus(object):
 class Job(object):
 	
 	# Class-level definitions
-	# Identify the attributes that should persist in external storage.  The
-	# first entry will be the Primary Key for the table.
+	# Identify the attributes that should persist in external storage.
 	# (Each definition key must also have get_* and set_* methods.)
 	_field_definitions = [
 		# (column name, column type, default value)
-		('uuid', 'text', None),  # Must be set later.
+		('uuid', 'text primary key', None),  # Must be set later.
 		('status', 'integer', JobStatus.from_str('not_started')),
 		('result', 'integer', JobResult.from_str('not_finished')),
 		('destination', 'text', None),
@@ -99,7 +98,6 @@ class Job(object):
 	
 	@staticmethod
 	def _get_field_definitions():
-		# As noted above, the first tuple is the primary key.
 		return [(column, type) for (column, type, default) in Job._field_definitions]
 	# End of _get_field_definitions() -------------------------------------
 	
