@@ -70,12 +70,29 @@ To start the master:
 
 		(venv) $ python master.py
 
-To get a list of the available endpoints, you can query the master itself:
+To get a quick list of the available endpoints, you can query the master itself:
 
 		(venv) $ http localhost:8010/
 
+### /query/<uuid>
 
-## Testing
+To lookup the status of a query perform:
+
+		(venv) $ http localhost:8010/ask_a_minion/v1/query/<uuid>
+
+The response will be a JSON object similar to the following:
+
+	{
+		"destination": null,
+		"message": null,
+		"result": "success",
+		"status": "finished",
+		"uuid": "43406710-7162-472e-89d7-005d5f639a17"
+	}
+
+For convenience, keys are sorted alphabetically.
+
+## Running unit-tests
 
 In the top-level folder just run `nosetests`.
 
