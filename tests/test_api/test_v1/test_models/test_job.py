@@ -125,7 +125,7 @@ class Test_Job_Model_Without_Database(object):
 	# End of test_set_status() -----------------------------------------------
 	
 	
-	def test_set_status_updates_internal_sturcture(self):
+	def test_set_result_updates_internal_sturcture(self):
 		"""Job_Model: set_result updates internal structures"""
 		self.a_job.set_result('success')
 		assert 'success' == self.a_job.result
@@ -139,10 +139,24 @@ class Test_Job_Model_Without_Database(object):
 	# End of test_set_result() -----------------------------------------------
 	
 	
+	def test_set_message_updates_internal_sturcture(self):
+		"""Job_Model: set_message updates internal structures"""
+		self.a_job.set_message('my message')
+		assert 'my message' == self.a_job.message
+	# End of test_set_message() ----------------------------------------------
+	
+	
+	def test_get_message_reads_internal_sturcture(self):
+		"""Job_Model: set_message updates internal structures"""
+		self.a_job.message = 'another message'
+		assert 'another message' == self.a_job.get_message()
+	# End of test_set_message() ----------------------------------------------
+	
+	
 	def test_dump_json_of_new_object(self):
 		"""Job_Model: Dumping JSON of a newly-created object produces expected format"""
 		one_job = job.Job()
-		dumped_obj = json.loads(one_job.get_json())
+		dumped_obj = json.loads(one_job.to_json())
 		assert dumped_obj['status'] == 'not_started'
 	# End of test_dump_json_of_new_object() ----------------------------------
 # End of class Test_Job_Model_Without_Database ===============================

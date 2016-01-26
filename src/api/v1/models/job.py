@@ -82,6 +82,7 @@ class Job(object):
 		('status', 'text', 'not_started'),
 		('result', 'text', 'not_finished'),
 		('destination', 'text', None),
+		('message', 'text', None),
 	]
 	table_name = 'job'
 	
@@ -151,6 +152,16 @@ class Job(object):
 	# End send_to_storage() --------------------------------------------------
 	
 	
+	def get_message(self):
+		return self.message
+	# End of get_message() ---------------------------------------------------
+	
+	
+	def set_message(self, message):
+		self.message = message
+	# End of set_message() ---------------------------------------------------
+	
+	
 	def get_uuid(self):
 		return self.uuid
 	# End of get_uuid() ------------------------------------------------------
@@ -191,7 +202,7 @@ class Job(object):
 	# End of set_destination() -----------------------------------------------
 	
 	
-	def get_json(self):
+	def to_json(self):
 		"""Dump an object to JSON format for reporting to client.
 		
 		Only values that are not None are returned.
@@ -212,7 +223,7 @@ class Job(object):
 			indent=4,
 			separators=(',', ': '),
 		)
-	# End of get_json() ------------------------------------------------------
+	# End of to_json() ------------------------------------------------------
 	
 	
 	def dispatch(self):
