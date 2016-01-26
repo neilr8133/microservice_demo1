@@ -5,11 +5,12 @@ which implements a fairly trivial microservice but which demonstrates code
 layout decisions, asynchronous processing, etc.
 
 ## Setup
-(Because the master and minion will be talking to each other, you will need two
-terminal windows; for brevity I will refer to these as the master and minion
-windows
+(Because the master and minion will be talking to each other, you will need
+three terminal windows: one for the master, one for the minion, and one to
+send queries from.  For brevity I will refer to these as the master, minion,
+and command windows.
 
-In the 'master' window, create (and activate) a virtualenv:
+In the master window, create (and activate) a virtualenv:
 
 		$ cd master
 		$ virtualenv ./venv_master
@@ -35,7 +36,7 @@ entries):
 		(venv_master) $ cd src
 		(venv_master) $ python initialize.py
 
-In the 'minion' window, repeat these steps to install the requirements for
+In the minion window, repeat these steps to install the requirements for
 the minion:
 
 		$ cd minion
@@ -66,21 +67,64 @@ itself using the `httpie` utility that was installed during setup:
 
 		(venv_master) $ http localhost:8010/
 
-At this point, you should also start the minion so that the master has
-something to talk to (this will start a listening agent on :8020):
+At this point, you should also (in the minion window) start the minion so that
+the master has something to talk to (this will start a listening agent
+on :8020):
 
 		(venv_minion) $ python minion.py
 
 (You can change the port the minion listens on in `minion/config.ini` but if
 you do then make sure you also update the corresponding `minion_port` entry in
-`master/config.ini`.)
+`master/config.ini` so the master can still reach the minion).
+
+In the command window, navigate to either the master or minion folder (it
+doesn't matter which) and activate the virtualenv; in the examples below I
+was in the master virtualenv.
 
 After making a query to the system, a UUID will be returned that corresponds
 to your request (see `/query/<uuid>` below for details).
 
-### /query/<uuid>
+## Full Example
 
-To lookup the status of a job:
+Initate a query:
+
+		(venv_master) $ http :8010/ask_a_minion/v1/time
+		HTTP/1.0 200 OK
+		Content-Length: 155
+		Content-Type: text/html; charset=utf-8
+		Date: Tue, 26 Jan 2016 07:59:29 GMT
+		Server: Werkzeug/0.11.3 Python/2.7.2
+
+		{
+			"destination": null,
+			"message": null,
+			"result": "not_finished",
+			"status": "pending",
+			"uuid": "0da5e1c5-6011-4c05-ae4b-4f120a3cb7ac"
+		}
+
+Lookup the status of that query based on the UUID:
+
+		(venv_master) $ http :8010/ask_a_minion/v1/query/0da5e1c5-6011-4c05-ae4b-4f120a3cb7ac
+		HTTP/1.0 200 OK
+		Content-Length: 180
+		Content-Type: text/html; charset=utf-8
+		Date: Tue, 26 Jan 2016 07:59:42 GMT
+		Server: Werkzeug/0.11.3 Python/2.7.2
+
+		{
+			"destination": null,
+			"message": "Tue, 26 Jan 2016 07:59:29 +0000",
+			"result": "success",
+			"status": "finished",
+			"uuid": "0da5e1c5-6011-4c05-ae4b-4f120a3cb7ac"
+		}
+
+## API
+
+### /query/&lt;uuid&gt;
+
+Lookup the status of a specific job:
 
 		(venv) $ http localhost:8010/ask_a_minion/v1/query/<uuid>
 
@@ -128,7 +172,7 @@ can be used to query the status of the job.
 
 ## Running unit-tests
 
-In the top-level folder just run `nosetests`.
+In either the `/master` or `/minion` folder just run `nosetests`.
 
 ## Notes
 
