@@ -134,7 +134,7 @@ class Job(object):
 			
 			attribute_setter(attribute_value)
 		return new_job
-	# End of to_json() -------------------------------------------------------
+	# End of to_json_string() -------------------------------------------------------
 	
 	
 	@staticmethod
@@ -223,8 +223,8 @@ class Job(object):
 	# End of set_destination() -----------------------------------------------
 	
 	
-	def to_json(self):
-		"""Dump an object to JSON format for reporting to client.
+	def to_json_string(self):
+		"""Emit a JSON-formatted string for reporting to client.
 		
 		@return A JSON-formatted object.
 		"""
@@ -240,7 +240,7 @@ class Job(object):
 			indent=4,
 			separators=(',', ': '),
 		)
-	# End of to_json() ------------------------------------------------------
+	# End of to_json_string() ------------------------------------------------
 	
 	
 	def dispatch(self):

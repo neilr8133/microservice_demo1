@@ -156,7 +156,7 @@ class Test_Job_Model_Without_Database(object):
 	def test_dump_json_of_new_object(self):
 		"""Job_Model: Dumping JSON of a newly-created object produces expected format"""
 		one_job = job.Job()
-		dumped_obj = json.loads(one_job.to_json())
+		dumped_obj = json.loads(one_job.to_json_string())
 		assert dumped_obj['status'] == 'not_started'
 	# End of test_dump_json_of_new_object() ----------------------------------
 # End of class Test_Job_Model_Without_Database ===============================

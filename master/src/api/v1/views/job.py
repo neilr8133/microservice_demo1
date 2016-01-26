@@ -19,12 +19,12 @@ from api.v1.models import job
 global_vars.app_handle = flask.Flask('demo')  # @TODO: This initialization needs to happen elsewhere!
 
 
-@global_vars.app_handle.route('/debug')
-def debug():
-	message = str(global_vars.app_handle.url_map)
-	message += '\n'
-	message += flask.url_for('lookup_uuid', uuid=1234)
-	return message
+# @global_vars.app_handle.route('/debug')
+# def debug():
+	# message = str(global_vars.app_handle.url_map)
+	# message += '\n'
+	# message += flask.url_for('lookup_uuid', uuid=1234)
+	# return message
 
 
 def generate_route_string(suffix):
@@ -79,7 +79,7 @@ def get_status(uuid=None):
 		return (str(message_obj), http_status_codes.BAD_REQUEST)
 	if 'finished' == lookup_job.get_status():
 		# Don't query the minion again.
-		return (str(lookup_job.to_json()))
+		return (str(lookup_job.to_json_string()))
 	# In progress; query the minion.
 	#
 	# For security we should use 'https' for our requests; for this demo we'll
@@ -89,9 +89,15 @@ def get_status(uuid=None):
 			port=global_vars.minion_port,
 			endpoint=generate_route_string('/query/{}'.format(uuid)),
 	)
-	updated_job = job.Job.from_json_string(requests.get(destination_url))
+	response = requests.get(destination_url)
+	
+	# We *could* use response.json() here, but then our Job object would need
+	# to have {to|from}_storage() but to_json_string() which would emit text
+	# and from_json_blob() which would accept an already-encoded JSON object.
+	# Better to keep the importers/exporter symmetric (if redundant).
+	updated_job = job.Job.from_json_string(response.text)
 	updated_job.send_to_storage()
-	return "Formatted response from server: {}".format(updated_job.to_json())
+	return updated_job.to_json_string()
 # End of get_status() --------------------------------------------------------
 
 
@@ -115,7 +121,7 @@ def time():
 			}
 	)
 	a.send_to_storage()
-	return(str(a.to_json()))
+	return(str(a.to_json_string()))
 # End of time() --------------------------------------------------------------
 
 
