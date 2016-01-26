@@ -39,7 +39,7 @@ def generate_route_string(suffix):
 def api_help():
 	# Generate message that gets displayed if an invalid URL is hit.
 	allowed_methods = [
-		('get_status', {'uuid': '00000000-00000000-00000000-00000000'}),
+		('get_status', {'uuid': '00000000-0000-0000-0000-000000000000'}),
 		('time', {}),
 	]
 	# response = flask.url_for('lookup_uuid', **allowed_methods[0][1])
