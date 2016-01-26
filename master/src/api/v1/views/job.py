@@ -8,6 +8,7 @@ from __future__ import absolute_import
 
 # Import third-party libraries
 import flask
+import requests
 
 # Import custom libraries
 import global_vars
@@ -77,9 +78,20 @@ def get_status(uuid=None):
 		}
 		return (str(message_obj), http_status_codes.BAD_REQUEST)
 	if 'finished' == lookup_job.get_status():
+		# Don't query the minion again.
 		return (str(lookup_job.to_json()))
-	# In progress; query the minion
-	return ("Would have queried minion for job status for {}".format(lookup_job.to_json()))
+	# In progress; query the minion.
+	#
+	# For security we should use 'https' for our requests; for this demo we'll
+	# allow the use of 'http'.
+	destination_url = 'http://{address}:{port}{endpoint}'.format(
+			address=global_vars.minion_address,
+			port=global_vars.minion_port,
+			endpoint=generate_route_string('/query/{}'.format(uuid)),
+	)
+	updated_job = job.Job.from_json_string(requests.get(destination_url))
+	updated_job.send_to_storage()
+	return "Formatted response from server: {}".format(updated_job.to_json())
 # End of get_status() --------------------------------------------------------
 
 
@@ -87,13 +99,23 @@ def get_status(uuid=None):
 def time():
 	"""Query the minion for the current time.
 	"""
+	# For security we should use 'https' for our requests; for this demo we'll
+	# allow the use of 'http'.
+	destination_url = 'http://{address}:{port}{endpoint}'.format(
+			address=global_vars.minion_address,
+			port=global_vars.minion_port,
+			endpoint=generate_route_string('/time'),
+	)
 	a = job.Job()
-	a.set_status('finished')
-	a.set_result('success')
-	a.set_message('dummy entry to test the /time interface')
+	a.set_status('pending')
+	request = requests.post(
+			destination_url,
+			data={
+				'uuid': a.get_uuid()
+			}
+	)
 	a.send_to_storage()
 	return(str(a.to_json()))
-	return "Would query the time on a remote computer."
 # End of time() --------------------------------------------------------------
 
 

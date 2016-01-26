@@ -117,6 +117,27 @@ class Job(object):
 	
 	
 	@staticmethod
+	def from_json_string(json_string):
+		"""Build the Job object represented by a text-encoded JSON object.
+		
+		@param[in] json_string A text-encoded JSON object.
+		@return A Job object.
+		"""
+		# @TODO Reduce, stamp out, and eliminate redundancy!  ({from|to}_{storage|json})
+		json_blob = json.loads(json_string)
+		new_job = Job()
+		for tuple in Job._get_field_definitions():
+			# Invoke the 'set_*' method for all keys
+			attribute_name = tuple[0]
+			attribute_value = json_blob[attribute_name]
+			attribute_setter = getattr(new_job, 'set_{0}'.format(attribute_name))
+			
+			attribute_setter(attribute_value)
+		return new_job
+	# End of to_json() -------------------------------------------------------
+	
+	
+	@staticmethod
 	def from_storage(uuid):
 		"""Build a Job object based on an entry in storage.
 		
@@ -204,8 +225,6 @@ class Job(object):
 	
 	def to_json(self):
 		"""Dump an object to JSON format for reporting to client.
-		
-		Only values that are not None are returned.
 		
 		@return A JSON-formatted object.
 		"""
