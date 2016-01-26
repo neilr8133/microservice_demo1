@@ -5,6 +5,8 @@ from __future__ import absolute_import
 #
 # Import standard libraries
 import json
+import threading
+import time
 import uuid
 
 # Import third-party libraries
@@ -71,7 +73,7 @@ class JobStatus(object):
 
 
 
-class Job(object):
+class Job(threading.Thread):
 	
 	# Class-level definitions
 	# Identify the attributes that should persist in external storage.
@@ -86,7 +88,18 @@ class Job(object):
 	]
 	table_name = 'job'
 	
-	def __init__(self):
+	
+	def run(self):
+		# Dummy method, gets overridden below
+		pass
+	
+	
+	def __init__(self, to_be_run=None):
+		"""Default constructor.
+		
+		@param[in] to_be_run is the optional task to be executed when the
+		           thread launches.
+		"""
 		# Initialize all fields to their defaults.
 		for tuple in Job._get_default_values():
 			setattr(self, tuple[0], tuple[1])
@@ -95,6 +108,14 @@ class Job(object):
 		# (Since this is a unique value per instance, we can't set it in the
 		# defaults up above.)
 		self.set_uuid(str(uuid.uuid4()))
+		
+		if to_be_run:
+			runnable_methods = {
+				'time': self.get_time,
+			}
+			self.run = runnable_methods[to_be_run]
+		
+		threading.Thread.__init__(self)
 	# End of __init__() ------------------------------------------------------
 	
 	
@@ -224,9 +245,22 @@ class Job(object):
 	# End of to_json() ------------------------------------------------------
 	
 	
-	def dispatch(self):
-		self.set_status(JobStatus.from_str('pending'))
-		print "Would dispatch job '{0}' to minion at '{1}'".format(self.get_uuid(), self.get_destination())
+	def get_time(self):
+		print "Sending to storage"
+		self.send_to_storage()
+		print "Sleeping for 15 seconds..."
+		time.sleep(15)
+		print "Setting status to 'running'"
+		self.set_status('running')
+		print "Setting time to {}".format(time.mktime(time.localtime()))
+		self.set_message(time.mktime(time.localtime()))
+		print "Reading-back message: '{}'".format(self.get_message())
+		print "Sending to storage"
+		self.send_to_storage()
+		self.set_status('finished')
+		self.set_result('success')
+		print "Sending to storage"
+		self.send_to_storage()
 # End of class Job ===========================================================
 
 # EOF

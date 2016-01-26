@@ -114,6 +114,8 @@ def upsert(model_class, **values):
 	prefix = 'INSERT OR REPLACE INTO "{0}" VALUES '.format(model_class.get_table_name())
 	placeholders = ', '.join([':{0}'.format(column) for (column, type) in model_class._get_field_definitions()])
 	statement = '{0} ({1})'.format(prefix, placeholders)
+	# print statement
+	# print values
 	cursor = global_vars.storage_handle.cursor()
 	cursor.execute(statement, values)
 	global_vars.storage_handle.commit()
