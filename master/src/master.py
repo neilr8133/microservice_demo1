@@ -22,14 +22,14 @@ import storage
 
 def main():
 	config.parse_options()
-	global_vars.storage_handle = storage.connect(global_vars.db_filename)
+	#global_vars.storage_handle = storage.connect(global_vars.db_filename)
 	global_vars.app_handle.run(
 		host=global_vars.bind_address,
 		port=global_vars.listen_port,
 		debug=True,
 		use_debugger=True,
 	)
-	storage.close(global_vars.storage_handle)
+	#storage.close(global_vars.storage_handle)
 	print "Received request for shutdown; halting."
 # End of main() --------------------------------------------------------------
 
