@@ -18,6 +18,7 @@ setup(
 		# (and would probably be removed from a release candidate, although
 		# their presence should cause no harm).
 		'bumpversion',
+		'coverage',
 		'httpie',
 		'nose',
 		'pylint',

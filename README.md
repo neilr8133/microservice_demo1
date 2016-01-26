@@ -172,7 +172,8 @@ can be used to query the status of the job.
 
 ## Running unit-tests
 
-In either the `/master` or `/minion` folder just run `nosetests`.
+In either the `/master` or `/minion` folder just run `nosetests` to run tests
+and generate a coverage report in the `./cover` folder for that component.
 
 ## Notes
 

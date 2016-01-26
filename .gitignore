@@ -4,8 +4,10 @@ venv_minion/
 
 # Ignore generated files
 *.egg-info/
+cover/
 dist/
 master/build/
 minion/build/
 *.pyc
 *.sqlite
+.coverage
