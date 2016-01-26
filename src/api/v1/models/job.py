@@ -211,12 +211,10 @@ class Job(object):
 		"""
 		this_obj = {}
 		for tuple in Job._get_field_definitions():
-			# Invoke the 'get_*' method for all keys; if the answer is None
-			# then we omit it.
+			# Invoke the 'get_*' method for all keys
 			attribute = tuple[0]
 			result = getattr(self, 'get_{0}'.format(attribute))()
-			if result:
-				this_obj[attribute] = result
+			this_obj[attribute] = result
 		return json.dumps(
 			this_obj,
 			sort_keys=True,
