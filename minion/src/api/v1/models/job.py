@@ -231,21 +231,14 @@ class Job(threading.Thread):
 	
 	def get_time(self, delay):
 		self.set_status('pending')
-		print "Sending to storage"
 		self.send_to_storage()
-		print "Sleeping for '{}' seconds...".format(delay)
 		time.sleep(delay)
-		print "Setting status to 'running'"
 		self.set_status('running')
-		print "Setting time to {}".format(time.mktime(time.localtime()))
 		self.set_message(
 				time.strftime("%a, %d %b %Y %H:%M:%S +0000", time.gmtime()))
-		print "Reading-back message: '{}'".format(self.get_message())
-		print "Sending to storage"
 		self.send_to_storage()
 		self.set_status('finished')
 		self.set_result('success')
-		print "Sending to storage"
 		self.send_to_storage()
 # End of class Job ===========================================================
 

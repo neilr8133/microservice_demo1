@@ -22,13 +22,21 @@ global_vars.app_handle = flask.Flask('demo')  # @TODO: This initialization needs
 # @global_vars.app_handle.route('/debug')
 # def debug():
 	# message = str(global_vars.app_handle.url_map)
-	# message += '\n'
-	# message += flask.url_for('lookup_uuid', uuid=1234)
 	# return message
 
 
 def generate_route_string(suffix):
 	return '/ask_a_minion/v1{0}'.format(suffix)
+
+def generate_remote_endpoint(suffix):
+	# For security we should use 'https' for our requests; for this demo we'll
+	# allow the use of 'http'.
+	return 'http://{address}:{port}{endpoint}'.format(
+			address=global_vars.minion_address,
+			port=global_vars.minion_port,
+			endpoint=generate_route_string(suffix),
+	)
+# End of generate_remote_endpoint() ------------------------------------------
 
 
 # For this simple demo, manually register the root path and a few others to
@@ -41,6 +49,7 @@ def api_help():
 	allowed_methods = [
 		('get_status', {'uuid': '00000000-0000-0000-0000-000000000000'}),
 		('time', {}),
+		('magic8ball', {'question': 'Should I ask the Magic 8-Ball a question?'}),
 	]
 	# response = flask.url_for('lookup_uuid', **allowed_methods[0][1])
 	response_list = []
@@ -80,15 +89,8 @@ def get_status(uuid=None):
 	if 'finished' == lookup_job.get_status():
 		# Don't query the minion again.
 		return (str(lookup_job.to_json_string()))
-	# In progress; query the minion.
-	#
-	# For security we should use 'https' for our requests; for this demo we'll
-	# allow the use of 'http'.
-	destination_url = 'http://{address}:{port}{endpoint}'.format(
-			address=global_vars.minion_address,
-			port=global_vars.minion_port,
-			endpoint=generate_route_string('/query/{}'.format(uuid)),
-	)
+	
+	destination_url = generate_remote_endpoint('/query/{}'.format(uuid))
 	response = requests.get(destination_url)
 	
 	# We *could* use response.json() here, but then our Job object would need
@@ -110,11 +112,7 @@ def time():
 	"""
 	# For security we should use 'https' for our requests; for this demo we'll
 	# allow the use of 'http'.
-	destination_url = 'http://{address}:{port}{endpoint}'.format(
-			address=global_vars.minion_address,
-			port=global_vars.minion_port,
-			endpoint=generate_route_string('/time'),
-	)
+	destination_url = generate_remote_endpoint('/time')
 	a = job.Job()
 	a.set_status('pending')
 	request = requests.post(
@@ -129,7 +127,25 @@ def time():
 # End of time() --------------------------------------------------------------
 
 
-# POST /ask_a_minion/v1/time   JSON: delay=TT (seconds)                 returns UUID, then current time (after delay expires)
+@global_vars.app_handle.route(generate_route_string('/magic8ball'), methods=['POST'])
+def magic8ball():
+	"""Ask the minion to ask a question and shake the Magic 8-Ball."""
+	a = job.Job()
+	destination_url = generate_remote_endpoint('/magic8ball')
+	delay = flask.request.form['delay']
+	a.set_status('pending')
+	request = requests.post(
+			destination_url,
+			data={
+				'uuid': a.get_uuid(),
+				'delay': flask.request.form.get('delay', 0),
+				'question': flask.request.form['question'],
+			}
+	)
+	a.send_to_storage()
+	return(str(a.to_json_string()))
+# End of magic8ball() --------------------------------------------------------
+
 # POST /ask_a_minion/v1/magic8ball  JSON: delay=TT (seconds) query=??   returns UUID, then Yes/No/Maybe
 # POST /ask_a_minion/v1/
 

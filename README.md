@@ -71,13 +71,16 @@ something to talk to (this will start a listening agent on :8020):
 
 		(venv_minion) $ python minion.py
 
-You can change the port the minion listens on in `minion/config.ini` but if
+(You can change the port the minion listens on in `minion/config.ini` but if
 you do then make sure you also update the corresponding `minion_port` entry in
-`master/config.ini`.
+`master/config.ini`.)
+
+After making a query to the system, a UUID will be returned that corresponds
+to your request (see `/query/<uuid>` below for details).
 
 ### /query/<uuid>
 
-To lookup the status of a query perform:
+To lookup the status of a job:
 
 		(venv) $ http localhost:8010/ask_a_minion/v1/query/<uuid>
 
@@ -101,8 +104,10 @@ provided:
 		(venv) $ http localhost:8010/ask_a_minion/v1/time
 		(venv) $ http localhost:8010/ask_a_minion/v1/time?delay=15
 
-The delay is measured in seconds.  The response will be a JSON object similar
-to the following:
+The delay is measured in seconds.
+
+After waiting for any timeout, querying the UUID with `/query/<uuid>` will
+return a JSON-formatted string similar to the following:
 
 		{
 			"destination": null,
@@ -111,6 +116,15 @@ to the following:
 			"status": "finished",
 			"uuid": "df3f9a32-950d-4044-88f2-36d17698a341"
 		}
+
+### /magic8ball
+
+Ask the minion to ask the Magic 8-Ball a question:
+
+		(venv) $ http --verbose --form POST :8010/ask_a_minion/v1/magic8ball delay=5 question="Is this a guaranteed predictor of the future?"
+
+`delay` is optional.  As with `/time`, a UUID is immediately returned which
+can be used to query the status of the job.
 
 ## Running unit-tests
 

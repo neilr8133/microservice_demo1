@@ -26,7 +26,8 @@ def main():
 	global_vars.app_handle.run(
 		host=global_vars.bind_address,
 		port=global_vars.listen_port,
-		debug=True
+		debug=True,
+		use_debugger=True,
 	)
 	storage.close(global_vars.storage_handle)
 	print "Received request for shutdown; halting."

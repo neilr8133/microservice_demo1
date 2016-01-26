@@ -241,11 +241,6 @@ class Job(object):
 			separators=(',', ': '),
 		)
 	# End of to_json_string() ------------------------------------------------
-	
-	
-	def dispatch(self):
-		self.set_status(JobStatus.from_str('pending'))
-		print "Would dispatch job '{0}' to minion at '{1}'".format(self.get_uuid(), self.get_destination())
 # End of class Job ===========================================================
 
 # EOF
