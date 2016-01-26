@@ -5,6 +5,7 @@ from __future__ import absolute_import
 
 # Import standard libraries
 import json
+import uuid
 
 # Import third-party libraries
 import nose
@@ -107,7 +108,7 @@ class Test_JobStatus(object):
 
 class Test_Job_Model_Without_Database(object):
 	def setUp(self):
-		self.a_job = job.Job()
+		self.a_job = job.Job(str(uuid.uuid4()))
 	# End of setUp() ---------------------------------------------------------
 	
 	
@@ -155,7 +156,7 @@ class Test_Job_Model_Without_Database(object):
 	
 	def test_dump_json_of_new_object(self):
 		"""Job_Model: Dumping JSON of a newly-created object produces expected format"""
-		one_job = job.Job()
+		one_job = job.Job(str(uuid.uuid4()))
 		dumped_obj = json.loads(one_job.to_json())
 		assert dumped_obj['status'] == 'not_started'
 	# End of test_dump_json_of_new_object() ----------------------------------
@@ -184,7 +185,7 @@ class Test_Job_Model_With_Database(object):
 	def test_job_serializes_to_database(self):
 		"""Job_Model: object serializes to database system correctly"""
 		# Create the simulated job and serialize it to storage.
-		new_job = job.Job()
+		new_job = job.Job(str(uuid.uuid4()))
 		new_job.send_to_storage()
 		# Compare what was stored with the original object.
 		stored_row = storage.get_one(job.Job, 'uuid', new_job.get_uuid())
@@ -197,7 +198,7 @@ class Test_Job_Model_With_Database(object):
 	
 	def test_job_reconstituted_from_database(self):
 		"""Job_Model: successful reconsitution from database system"""
-		new_job = job.Job()
+		new_job = job.Job(str(uuid.uuid4()))
 		new_job.send_to_storage()
 		reconstituted_job = job.Job.from_storage(new_job.get_uuid())
 		assert new_job.get_uuid() == reconstituted_job.get_uuid()
