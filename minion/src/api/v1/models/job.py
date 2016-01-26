@@ -7,7 +7,6 @@ from __future__ import absolute_import
 import json
 import threading
 import time
-import uuid
 
 # Import third-party libraries
 import requests
@@ -94,7 +93,7 @@ class Job(threading.Thread):
 		pass
 	
 	
-	def __init__(self, to_be_run=None):
+	def __init__(self, uuid, to_be_run=None):
 		"""Default constructor.
 		
 		@param[in] to_be_run is the optional task to be executed when the
@@ -107,7 +106,7 @@ class Job(threading.Thread):
 		# Now perform custom initalization.
 		# (Since this is a unique value per instance, we can't set it in the
 		# defaults up above.)
-		self.set_uuid(str(uuid.uuid4()))
+		self.set_uuid(uuid)
 		
 		if to_be_run:
 			runnable_methods = {
@@ -149,7 +148,7 @@ class Job(threading.Thread):
 			# raise ValueError("UUID '{0}' was not found in storage".format(uuid))
 			# Let's be a little more gentle.
 			return None
-		new_job = Job()
+		new_job = Job(uuid)
 		for tuple in zip(Job._get_field_definitions(), row):
 			# Invoke the 'get_*' method for all keys.
 			attribute_name = tuple[0][0]
@@ -225,8 +224,6 @@ class Job(threading.Thread):
 	
 	def to_json(self):
 		"""Dump an object to JSON format for reporting to client.
-		
-		Only values that are not None are returned.
 		
 		@return A JSON-formatted object.
 		"""

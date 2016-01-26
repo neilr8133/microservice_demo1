@@ -29,16 +29,17 @@ def get_status(uuid):
 	If the job is still running, queries the minion and displays the real-time
 	status.
 	"""
+	# No validation because it's the job of the master to validate input.
 	lookup_job = job.Job.from_storage(uuid)
 	return (str(lookup_job.to_json()))
 # End of get_status() --------------------------------------------------------
 
 
-@global_vars.app_handle.route(generate_route_string('/time'), methods=['GET'])
+@global_vars.app_handle.route(generate_route_string('/time'), methods=['POST'])
 def time():
 	"""Query the minion for the current time.
 	"""
-	new_job = job.Job('time')
+	new_job = job.Job(flask.request.form['uuid'], 'time')
 	new_job.start()  # Launches in a separate thread
 	return str(new_job.to_json())
 # End of time() --------------------------------------------------------------
