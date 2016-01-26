@@ -23,8 +23,8 @@ def parse_options():
 	global_vars.db_filename = parser.get('master', 'db_filename')
 	global_vars.bind_address = parser.get('master', 'bind_address')
 	global_vars.listen_port = parser.getint('master', 'listen_port')
-	global_vars.minion_adddress = parser.get('master', 'minion_address')
-	global_vars.minion_port = parser.getint('master', 'minion_port')
+	global_vars.minion_adddress = parser.get('minion', 'minion_address')
+	global_vars.minion_port = parser.getint('minion', 'minion_port')
 # End of parse_options() -----------------------------------------------------
 
 # EOF
