@@ -3,9 +3,9 @@ venv_master/
 venv_minion/
 
 # Ignore generated files
-master/build/
-minion/build/
 *.egg-info/
 dist/
-*.db
+master/build/
+minion/build/
 *.pyc
+*.sqlite

@@ -169,7 +169,7 @@ class Test_Job_Model_With_Database(object):
 		# Because storage has to open/close connection with every access (UGH),
 		# we can't use ':memory:' or else we lose the DB after every command..
 		# UGH!
-		global_vars.db_filename = 'DELETE_ME__unittest.db'
+		global_vars.db_filename = 'DELETE_ME__unittest.sqlite'
 		model_list = initialize.generate_model_list()
 		initialize.clear_tables(model_list)
 		initialize.create_new_tables(model_list)
