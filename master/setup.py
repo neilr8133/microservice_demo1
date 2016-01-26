@@ -10,7 +10,7 @@ setup(
 	author = "Neil Richardson",
 	author_email = "neilr@ieee.org",
 	description = "Dummy project demonstrating Python use and API construction",
-	name = "API_demo",
+	name = "microservice demo 1 (master)",
 	version = "0.3.0",
 	
 	install_requires = [
