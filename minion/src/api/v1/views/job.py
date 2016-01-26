@@ -4,7 +4,7 @@ from __future__ import absolute_import
 # Define the 'job' views.
 
 # Import standard libraries
-# (None)
+import threading
 
 # Import third-party libraries
 import flask
@@ -13,7 +13,7 @@ import flask
 import global_vars
 import http_status_codes
 from api.v1.models import job
-
+from api.v1.actions import actions
 
 global_vars.app_handle = flask.Flask('demo')  # @TODO: This initialization needs to happen elsewhere!
 
@@ -39,8 +39,13 @@ def get_status(uuid):
 def time():
 	"""Query the minion for the current time.
 	"""
-	new_job = job.Job(flask.request.form['uuid'], 'time')
-	new_job.start()  # Launches in a separate thread
+	new_job = job.Job(flask.request.form['uuid'])
+	print "Job args: {}".format(flask.request.form['delay'])
+	new_thread = threading.Thread(
+			target = actions.get_time,
+			args=(new_job, int(flask.request.form['delay'])),
+	)
+	new_thread.start()  # Launch in a separate thread
 	return str(new_job.to_json())
 # End of time() --------------------------------------------------------------
 

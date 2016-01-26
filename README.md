@@ -93,6 +93,25 @@ The response will be a JSON object similar to the following:
 
 For convenience, keys are sorted alphabetically.
 
+### /time
+
+Ask the minion what time it is.  An optional delay before answering can be
+provided:
+
+		(venv) $ http localhost:8010/ask_a_minion/v1/time
+		(venv) $ http localhost:8010/ask_a_minion/v1/time?delay=15
+
+The delay is measured in seconds.  The response will be a JSON object similar
+to the following:
+
+		{
+			"destination": null,
+			"message": "Tue, 26 Jan 2016 05:51:23 +0000",
+			"result": "success",
+			"status": "finished",
+			"uuid": "df3f9a32-950d-4044-88f2-36d17698a341"
+		}
+
 ## Running unit-tests
 
 In the top-level folder just run `nosetests`.

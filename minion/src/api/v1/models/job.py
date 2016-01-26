@@ -88,12 +88,7 @@ class Job(threading.Thread):
 	table_name = 'job'
 	
 	
-	def run(self):
-		# Dummy method, gets overridden below
-		pass
-	
-	
-	def __init__(self, uuid, to_be_run=None):
+	def __init__(self, uuid):
 		"""Default constructor.
 		
 		@param[in] to_be_run is the optional task to be executed when the
@@ -107,14 +102,6 @@ class Job(threading.Thread):
 		# (Since this is a unique value per instance, we can't set it in the
 		# defaults up above.)
 		self.set_uuid(uuid)
-		
-		if to_be_run:
-			runnable_methods = {
-				'time': self.get_time,
-			}
-			self.run = runnable_methods[to_be_run]
-		
-		threading.Thread.__init__(self)
 	# End of __init__() ------------------------------------------------------
 	
 	
@@ -242,15 +229,17 @@ class Job(threading.Thread):
 	# End of to_json() ------------------------------------------------------
 	
 	
-	def get_time(self):
+	def get_time(self, delay):
+		self.set_status('pending')
 		print "Sending to storage"
 		self.send_to_storage()
-		print "Sleeping for 15 seconds..."
-		time.sleep(15)
+		print "Sleeping for '{}' seconds...".format(delay)
+		time.sleep(delay)
 		print "Setting status to 'running'"
 		self.set_status('running')
 		print "Setting time to {}".format(time.mktime(time.localtime()))
-		self.set_message(time.mktime(time.localtime()))
+		self.set_message(
+				time.strftime("%a, %d %b %Y %H:%M:%S +0000", time.gmtime()))
 		print "Reading-back message: '{}'".format(self.get_message())
 		print "Sending to storage"
 		self.send_to_storage()

@@ -104,6 +104,9 @@ def get_status(uuid=None):
 @global_vars.app_handle.route(generate_route_string('/time'), methods=['GET'])
 def time():
 	"""Query the minion for the current time.
+	
+	Can indicate the request should wait by specifying '?delay=X' where X is
+	the number of seconds to wait.
 	"""
 	# For security we should use 'https' for our requests; for this demo we'll
 	# allow the use of 'http'.
@@ -117,7 +120,8 @@ def time():
 	request = requests.post(
 			destination_url,
 			data={
-				'uuid': a.get_uuid()
+				'uuid': a.get_uuid(),
+				'delay': flask.request.args.get('delay', 0),
 			}
 	)
 	a.send_to_storage()
