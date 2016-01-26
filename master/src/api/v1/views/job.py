@@ -49,7 +49,7 @@ def api_help():
 	allowed_methods = [
 		('get_status', {'uuid': '00000000-0000-0000-0000-000000000000'}),
 		('time', {}),
-		('magic8ball', {'question': 'Should I ask the Magic 8-Ball a question?'}),
+		('magic8ball', {}),
 	]
 	# response = flask.url_for('lookup_uuid', **allowed_methods[0][1])
 	response_list = []
@@ -129,7 +129,9 @@ def time():
 
 @global_vars.app_handle.route(generate_route_string('/magic8ball'), methods=['POST'])
 def magic8ball():
-	"""Ask the minion to ask a question and shake the Magic 8-Ball."""
+	"""Ask the minion to ask a question and shake the Magic 8-Ball.
+	
+	Parameters are submitted via POST."""
 	a = job.Job()
 	destination_url = generate_remote_endpoint('/magic8ball')
 	delay = flask.request.form['delay']
