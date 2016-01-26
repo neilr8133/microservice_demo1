@@ -1,7 +1,8 @@
 # Ignore the virtualenv
-venv/
+venv_master/
 
 # Ignore generated files
+master/build/
 *.egg-info/
 dist/
 *.db
