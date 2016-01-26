@@ -11,7 +11,7 @@ setup(
 	author_email = "neilr@ieee.org",
 	description = "Dummy project demonstrating Python use and API construction",
 	name = "microservice demo 1 (minion)",
-	version = "0.5.0",
+	version = "0.5.1",
 	
 	install_requires = [
 		# Only used for development or demo--not required for 'production'
