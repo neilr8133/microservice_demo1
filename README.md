@@ -1,37 +1,3 @@
-# Top-Level Project Objective and Document Layout
-
-This project was produced as a ``coding demo/test'' with instructions that it
-be made publically-available on a repository site.  Below, we first list the
-assignment instructions, and then we follow with the normal project-specific
-stuff that one would expect to find in a README.
-
-# Assignment
-Create a simple REST API and attempt to show what you consider ``best practices''
-
-## Overview
-Create a REST API which has more than 1 API call in the language of your
-choice. The API should demonstrate best practices for REST, programming, and
-maintainability. The project should have some sort of simplified build
-(Makefile/setuptools/Maven/etc..) which makes it easy to build and run the
-project. The project can use a database, but if a database is used, it should
-be something which is simple to run in a testing environment
-(SQLite/HSQLDB/etc...).
-
-## Requirements
-1. More than 1 REST API endpoints
-2. Demonstrate use of HTTP verbs as they relate to REST
-3. At least 1 of the REST endpoints should trigger some business logic inside of the application
-4. Unit tests
-
-## Bonus Features
-The following, optional, features would demonstrate advanced abilities and improve
-consideration for the position:
-
-* Async Processing
-* API Documentation (Swagger/RAML/etc…)
-* Docker deployment (Create a docker container to run the application)
-* Unit Test coverage calculations
-
 # Project Overview
 
 This project as implemented demonstrates a simple ``master/minion'' pair
@@ -39,18 +5,23 @@ which implements a fairly trivial microservice but which demonstrates code
 layout decisions, asynchronous processing, etc.
 
 ## Setup
-Create (and activate) a virtualenv:
+(Because the master and minion will be talking to each other, you will need two
+terminal windows; for brevity I will refer to these as the master and minion
+windows
 
-		$ virtualenv ./venv
-		$ . ./venv/scripts/activate
+In the 'master' window, create (and activate) a virtualenv:
+
+		$ cd master
+		$ virtualenv ./venv_master
+		$ . ./venv_master/scripts/activate
 
 Or, if you're on Windows (this is one of the few commands that will be different):
 
-		> .\\venv\\scripts\\activate.bat
+		> .\\venv_master\\scripts\\activate.bat
 
 Install program dependencies:
 
-		(venv) $ python src/setup.py install
+		(venv_master) $ python src/setup.py install
 
 Note that this install not just the runtime requirements, but tools used for
 development and demonstration as well; this is intentional given the nature
@@ -58,21 +29,51 @@ of this project as a "demonstration project".  These groups are called out
 in the `setup.py` file and for a production system the dev/demo group could
 be removed--although there should also be no harm in letting them be deployed.
 
-Initialize the database (this command can be re-run later to clear any
-lingering jobs):
+Initialize the database (this command can be re-run later to clear any stale
+entries):
 
-		(venv) $ cd src
-		(venv) $ python initialize.py
+		(venv_master) $ cd src
+		(venv_master) $ python initialize.py
+
+In the 'minion' window, repeat these steps to install the requirements for
+the minion:
+
+		$ cd minion
+		$ virtualenv ./venv_minion
+		$ . ./venv_minion/scripts/activate
+
+(or on Windows):
+
+		> .\\venv_minion\\scripts\\activate.bat
+
+and then continue with installation and initialization:
+
+		(venv_minion) $ python src/setup.py install
+		(venv_minion) $ cd src
+		(venv_minion) $ python initialize.py
 
 ## Usage
 
 To start the master:
 
-		(venv) $ python master.py
+		(venv_master) $ python master.py
 
-To get a quick list of the available endpoints, you can query the master itself:
+This will start a listening agent on :8010 (you can configure this in the
+`master/config.ini` file).
 
-		(venv) $ http localhost:8010/
+To get a quick list of the available endpoints, you can query the master
+itself using the `httpie` utility that was installed during setup:
+
+		(venv_master) $ http localhost:8010/
+
+At this point, you should also start the minion so that the master has
+something to talk to (this will start a listening agent on :8020):
+
+		(venv_minion) $ python minion.py
+
+You can change the port the minion listens on in `minion/config.ini` but if
+you do then make sure you also update the corresponding `minion_port` entry in
+`master/config.ini`.
 
 ### /query/<uuid>
 
